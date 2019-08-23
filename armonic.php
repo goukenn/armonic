@@ -806,7 +806,8 @@ function igk_treat_generator($def, $callbacks){
         }
     }
 }
-///PRECEDENT + DataLF  [+ INDENT ] + $t
+///<summary> get stored output data</summary>
+///<note>PRECEDENT + DataLF  [+ INDENT ] + $t</note>
 function igk_treat_get($options){
     if(($options->mode != 0) || !empty($options->data)){
         return $options->data;
@@ -1349,6 +1350,7 @@ function igk_treat_outdef($def, $options, $nofiledesc=0){
                 "function"=>(object)array(
                     "sort"=>$name_sort,
                     "autodoc"=>function($v, $indent, $options){
+                        static $_listname = null;
                         if($_listname == null){
                             $_listname=["__construct"=>".ctr"];
                         }
