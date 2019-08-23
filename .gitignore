@@ -1,3 +1,4 @@
 /balafondeploy
 **/.vscode
 /test
+.gitignore
