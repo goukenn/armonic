@@ -1119,7 +1119,7 @@ function igk_treat_init_array_reading($m, $start, & $t, & $cancel=0){
 function igk_treat_lang_res($n){
     static $res=null;
     if($res == null){
-        $res["represent"]="Represente";
+        $res["represent"]="::";
     }
     return igk_getv($res, $n, $n);
 }
@@ -1128,10 +1128,14 @@ function igk_treat_lang_res($n){
 ///<param name="verbose" default="1"></param>
 function igk_treat_lib($autocheck=1, $verbose=1){
     ini_set("max_execution_time", 0);
-    $sdir="d://wamp/www/igkdev/Lib/igk/";
-    $dir="d://wamp/www/igkdev/Lib/igk/";
-    $outdir="d://temp/Lib/igk";
-    $outdir="D://wamp/www/demoigk/Lib/igk";
+    if (!defined("IGK_FRAMEWORK_DIR")){
+        return null;
+    }
+
+    $sdir= IGK_FRAMEWORK_DIR; // "d://wamp/www/igkdev/Lib/igk/";
+    $dir= IGK_FRAMEWORK_DIR;// "d://wamp/www/igkdev/Lib/igk/";
+    // $outdir="d://temp/Lib/igk";
+    $outdir= IGK_FRAMEWOR_DIR."/treat/output";  //"D://wamp/www/demoigk/Lib/igk";
     $count=0;
     $treat=0;
     $dln=strlen($sdir);
