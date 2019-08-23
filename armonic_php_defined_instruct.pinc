@@ -1,0 +1,126 @@
+<?php
+defined("IGK_FRAMEWORK") || die("REQUIRE FRAMEWORK - No direct access allowed");
+
+array_unshift($tab, (object)array(
+		'name'=>'definedReadExpression',
+		'pattern'=>"#(^|\\s+)(?P<operator>defined)(\\s*\()?#i",
+		'mode'=>function($m){
+			// igk_wln("check","mode:".$m->mode , "output:", $m->totreat,
+			// "check::::: ".(($m->mode == 0) && ($m->totreat ==0)),
+			// " ------------------------".$m->totreat."---------------------------" );
+			// var_dump(array_keys((array)$m));
+			// exit;
+			$r = (($m->context=='global') && ($m->mode == 0) && ($m->toread == 0));
+			// if ($r){
+				// igk_wln_e("context: ".$m->context. " check for defined in global : ", $m->lineNumber);
+			// }
+			return $r;
+			// 
+		},
+		'callback'=>function(& $t, $start, & $offset, $m){ 		
+			
+			$totreat = igk_createobj();
+			$totreat->def = preg_replace("/\\s+/", "",  $m->data[0][0]);
+			$totreat->type = $m->data["operator"][0];
+
+		
+			$totreat->starTreat = function(){
+                igk_wln_e("start treat **************************");
+			};
+
+			$totreat->endTreat = function($s, $options, $toread){
+				$toread->def .= trim($s);
+				
+				//igk_wln("moding:::::::::::::::::::::::::::::::::::::", $options);
+				 
+				$fi = 1;
+				if (!isset($options->FileInstructFlag)){
+					foreach($options->definitions as $k=>$v){
+						if ($k == "FileInstruct")
+							continue;
+						if (count($v)>0){
+							$fi = 0;
+							break;
+						}
+					}
+				}else{
+					$fi = 0; 
+				}
+				igk_treat_restore_context($options);
+				if ($fi ){
+					$options->definitions->FileInstruct[] = $toread->def;
+				}
+				else{
+					$options->FileInstructFlag = 1;
+					$options->DataLFFlag = 1;
+					igk_treat_append($options, $toread->def, 0);
+				}
+                
+                // igk_wln_e("define end treat **************************", 
+                // $s,
+                // $toread->def);
+			};
+
+			$totreat->handleChar = function(& $t, $start, & $offset, $ch, $m){
+                    switch($ch){
+						case ";":
+							igk_wln_e("dinf:",__FILE__.":".__LINE__);
+							break;
+					}
+			};
+			
+		 
+
+
+			
+			$before = substr($t, 0, $start);
+			// init defined context
+			igk_treat_set_context($m->options, 
+			$m->matcher->name, 
+			$m->options->mode,
+			[ "toread",
+			"mode", 
+			"data", 
+			"bracketDepth", 
+			"conditionDepth", 
+			"offsetDepth", 
+			"DataLFFlag"
+			]
+		);
+
+			$level = $m->options->offsetDepth + $m->options->bracketDepth;
+			$m->options->offsetDepth = $level;// $m->options->bracketDepth;
+			$m->options->bracketDepth = 0;
+			$m->options->mode = 1;
+			$m->options->data = "";
+			$m->options->DataLFFlag=0;
+			$m->options->conditionDepth = 0;
+			$m->options->openHook = 0;
+			
+		// 	$m->options->totreat = $totreat;
+		// 	igk_wln(
+		// 		"expression:** ** ** ** ** ****** ********", 
+		// 	$t, 
+		// 	$totreat
+		// );
+			if (!empty($before)){
+				igk_treat_append($m->options, $before, 0);
+
+			}
+			$t = substr($t, $start + strlen($m->data[0][0]));
+			$offset = 0;
+			// igk_wln("out:", $t);
+
+            $m->options->context = "defineOperationContext";
+			if ($totreat->def[strlen($totreat->def)-1]=='('){
+               
+                $m->options->conditionDepth = 1;
+			}else{
+
+            }
+            $m->options->DataLF = 0;
+            $m->options->toread = $totreat;
+             // igk_wln("condition depth", $m->options->conditionDepth);
+			return $t;
+		}
+	));

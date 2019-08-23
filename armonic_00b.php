@@ -6,8 +6,6 @@
 // release: 22/03/2019
 // copyright: igkdev @ 2019
 
-// explode class interface to single file per class or interface
-
 if (!defined('IGK_FRAMEWORK')){
 	$libfile = dirname(__FILE__)."/../igk/igk_framework.php";
 	if (file_exists($libfile)){
@@ -44,59 +42,6 @@ function igk_treat_lang_res($n){
 		
 	}	
 	return igk_getv($res, $n, $n);
-}
-function igk_treat_init_array_reading($m, $start, & $t, & $cancel=0){
-		$cancel = 0;
-		if ($m->options->context == "parameterReading"){
-		if ($m->options->toread->readPMode==0){
-			//parameter type declaration 
-			$cancel=1;
-			$m->options->toread->paramdef="array ";
-		}
-		// igk_wln("param reading: ".$m->options->toread->readPMode);
-		}
-		if (is_object($m->options->toread) && 
-		($m->options->toread->type =="function") && 
-		($m->options->toread->readingMode == "3") && 
-		( $m->options->context == "definitionDeclaration")
-		){
-			$cancel = 1;
-			// igk_wln("t:".$t);
-			// //	$t = substr($t, $start+ strlen($m->data["operator"][0]));
-			// igk_wln("t:".$t);
-			// igk_exit();
-		}
-		if ($cancel){
-			igk_treat_append($m->options, "array ", 0);
-			$t = substr($t, $start+ strlen($m->data["operator"][0]));
-			$offset = 0;
-			return $t;
-		}  
-		igk_treat_start_array($m, $t, $start, 0);// wait for "("
-		// igk_wln_e("after .... ", $m->options->toread);
-}
-
-function igk_treat_bind_array($m, $offset, $start, & $t, & $cancel){
-	$g = igk_treat_init_array_reading($m, $start, $t , $cancel);	
-	if ($cancel){
-		$t = $g;
-		return $t;
-	}	
-	igk_treat_set_context($m->options, $m->matcher->name, 0, array("toread"));
-
-	$m->options->depthFlag = 0;
-	$indent = 0;
-	$sp = "";
-	$f =  substr($t, 0, $start).$sp;
-	$t = substr($t, $offset);
-
-	// igk_wln_e("binding :", $t, $f,  $offset);
-	if (!empty($f))
-		igk_treat_append($m->options, $f, $indent);
-	$offset = 0; 
-	//+ change the toread to maching context
-	$m->options->toread = "array";
-	return $t;
 }
 
 function igk_treat_handle_modifier($options){
@@ -271,76 +216,37 @@ function igk_treat_modifier_getname($base_def, $t, $start, $m){
 			"modifier"=> igk_treat_modifier($m->options->modifier), //$m->options->modifier,
 			"name"=>$name,
 			"value"=>null,
-			"offset"=>strlen($gt) // offset where name . start can be 'for ',' or '='
+			"offset"=>strlen($base_def)+$start // offset where name . start can be 'for ',' or '='
 		);
 		// igk_wln("name: ".$name, "basedef:".$base_def, strlen($gt), $gt, strlen($base_def)+$start );
 		// igk_wln("init offset:".(strlen($base_def)+$start));
 	}else{
-		igk_wln_e(
-		__FILE__.":".__LINE__.":".__FUNCTION__, 
-		"target:".$t,
-		"gt:".$gt,
-		"base_def:".$base_def,
+		igk_wln("target:".$t);
+		igk_wln("gt:".$gt);
+		igk_wln("base_def:".$base_def);
 		// igk_wln("addition:".substr($t, 0, $start));
 		// igk_wln("next:".$rgx);
 		// igk_wln("conditionDepth:".$m->options->conditionDepth);
 		// igk_wln("lineDepth:".$m->options->conditionDepth);	
 		// igk_wln(igk_show_trace());
-		"not name : ".$gt . " Line:".$m->options->lineNumber);
+		igk_wln_e("not name : ".$gt . " Line:".$m->options->lineNumber);
 	}
 }
 ///<summary>internal use. read modifier value on mode 2</summary>
-function igk_treat_modifier_getvalue($base_def, $t, $start, $m){
-	//start in t	
+function igk_treat_modifier_getvalue($base_def, $t, $start, $m){	
+// igk_wln("getvalue :::: ".$t, "44".$base_def);	
 	$md = igk_last($m->options->modifierArgs);
 	$tb = "";
-	igk_wln("call get value ");
-	// igk_trace();
-	// igk_wln_e(__FILE__.":".__LINE__, "getvalue" , $base_def, $t, $start, $md);
-
 	if($md){
-		// + start here is where to stop reading
 		$def = substr($t, 0,$start);
-
-		// igk_trace();
-
-
-		// igk_wln_e("",
-		// 	"last_=view:::".substr($base_def, strpos($base_def, "=", -1)+1).$def,
-		// 	"entry : ".igk_treat_get($m->options),
-		// 	"basedef:". $base_def,
-		// "basedefln:". strlen($base_def),
-		// "t:".$t,
-		// "tln:".strlen($t),
-		// "start:".$start,
-		// "def:".$def,
-		// "mdoffset:".$md->offset,
-		// "base_hf:".($rdef= trim(substr($base_def, $md->offset))),
-		// "rdef: ".$rdef.$def,
-		// "count: ".(preg_match_all("/ /", $base_def))
-		// );
-		// $def= $base_def.$d$ef;							
-		// $tb = ltrim(substr(substr($base_def.$def, $md->offset),1)); // +1 cause of = present 
+		// $def= $base_def.$def;							
+		 $tb = ltrim(substr(substr($base_def.$def, $md->offset),1)); // +1 cause of = present 
 		// igk_wln_e("TB:",$tb,"1:". $def);
-		// $md->value = $tb;
-		// if (!empty($base_def)){
-		// 	$def = trim(explode("=", $base_def)[1]).$def;		
-		// }
-
-		$md->value = trim(substr($rdef = $base_def.$def, strrpos($rdef, "=", 0)+1)); // trim($def);
-		// igk_wln_e("get value: ",$md->value, "basedef", $base_def, "redef : ".$rdef,
-		// strrpos($rdef, "=", 0)
-	// );
-
-		// "t:".$t."-----------------------------",  
-		// "start:".$start,
-		// "mdoffset:".$md->offset,
-		// "basedef : ".$base_def, 
-		// "sub : ". trim(substr($base_def. substr($t, 0, $start), $md->offset)),
-
-		// "last line offset: ". strlen(array_pop(explode("\n",$base_def))), // $md->offset
-		// "outvalue : ".$md->value, " ", " " );//, $base_def, $start, $t);
-	} 
+		$md->value = $tb;
+		// $md->value = $def;
+	}
+	// igk_trace();
+	// igk_wln_e("getvalue :::: ".$tb);	
 	$m->options->modFlag = 1;
 }
 		
@@ -350,14 +256,9 @@ function igk_treat_handle_modargs(& $t, $start, & $offset, $g, $m){
 	
     // igk_wln("handlemodeargs:".$g."|".$m->options->modFlag . " cdepth:".$m->options->conditionDepth. " modifier:".
 	// $m->options->modifier);
-	
-	// igk_wln("data ::::::::::::::::::::: ".$g, $m->options->toread, 
-	// $m->options->conditionDepth,
-	// $m->options->modifier);
 	if( ($m->options->toread != "array") && $m->options->modFlag && ($m->options->conditionDepth<=0) && !empty($m->options->modifier)){
-		//+ not in array context ready definition
 		switch($g){
-				// case ",": // mod separator
+			// case ",": // mod separator
 				// handle param
 				// igk_wln("mod separator:".$t);
 				// break;
@@ -365,19 +266,22 @@ function igk_treat_handle_modargs(& $t, $start, & $offset, $g, $m){
 			case "=":
 				// valid separator
 				// igk_wln("mod: ". $g. " ".$m->options->modFlag);
-				$modifier_def = igk_treat_get($m->options);
+				$base_def = igk_treat_get($m->options);
 				
 				if ($m->options->modFlag==2){ // for multi variable declaration
 					// end read value
 					// igk_wln("**************:end get value:".$t);
-					igk_treat_modifier_getvalue($modifier_def, $t, $start, $m);
+					igk_treat_modifier_getvalue($base_def, $t, $start, $m);
 					return;
 				}
-				igk_treat_modifier_getname($modifier_def, $t, $start, $m);
+				igk_treat_modifier_getname($base_def, $t, $start, $m);
 				 
 				if ($g == "="){							
 					$m->options->modFlag = 2; // 
-				} 			
+					// igk_wln("###############wait for reading value: ".$t);
+				} 
+				$base_def =  igk_treat_get($m->options).substr($t, 0, $start);
+				// igk_wln("basedef:1:".$base_def);
 				break;		
 		}
 	}
@@ -420,94 +324,93 @@ function igk_treat_outdef($def, $options, $nofiledesc=0){
 			return strcmp(strtolower($a->name), strtolower($b->name));
 		});
 		};
-
-
+		
 		$tlist = array(
-			"use"=>(object)array(
-				"sort"=>$name_sort, 
-				"doc"=>0,
-				"noXmlDoc"=>1,
-				"render"=>function($v){
-					 
-					return $v->src;
-			}),
 			"global"=>(object)array(
 				"doc"=>0,
 				"noXmlDoc"=>1,
 				"render"=>function($v){
 					 return $v->src;
 				}
-			)		
+			),
+			"use"=>(object)array(
+			"sort"=>$name_sort, 
+			"doc"=>0,
+			"noXmlDoc"=>1,
+			"render"=>function($v){
+				return $v->src;
+			} )
 			,"vars"=>(object)array(
-				"doc"=>0,
-				"noXmlDoc"=>1,
-				"sort"=>function(& $tab){
-					$q = $tab["tab"]; 
-					usort($q, function($a, $b){
-					$r = strcmp($a->modifier, $b->modifier);
-					if ($r==0){
-						$r = strcmp($a->name, $b->name);
-					}
-					return $r;
-					});
-					
-					$tab["tab"] = $q;				
-					$tab = array((object)array("tab"=>$tab, "indentLevel"=>-1));
-				
-				},
-				"render"=>function($tab, $indent, & $tdef=null, $options=null){
-			
-						$indent = str_repeat($options->IndentChar, $tab->tab["depth"]);
-						//$out.= IGK_LF;
-						$inline_var = igk_gettsv($options, "command/noVarGroup")!=1;
-						$gp = igk_gettsv($options, "command/multilineVars");
-						$modifier = -1;
-						$sp = "";
-						$mp = '';
-						$lf = "";
-						if ($gp)
-							$lf = $options->LF.$indent;
-						$out = "";
-						$tab = $tab->tab["tab"];
-						
-						foreach($tab as $k=>$v){ 
-							// igk_wln("vargrup ", $v);
-								if ($inline_var && ($v->modifier!='const' )){
-									if (($modifier==-1) || ($modifier!= $v->modifier)){
-										if (($modifier!==-1)&&($modifier!="const")){
-											$out.=";".IGK_LF;
-										}
-										$modifier = $v->modifier;
-										$out.= $indent.$modifier;
-										if ($gp)
-											$mp = str_repeat(" ", strlen($modifier));
-										else 
-											$mp = "";
-									}else{
-										$out.=",".$lf.$mp;
-									}
-									$out .= " ".$v->name;
-									if (($v->value!==null)&&(!empty($v->value)))
-										$out.= $sp."=".$sp.$v->value;
-								
-								}
-								else{
-									$out .= $indent.$v->modifier." ".$v->name;
-									if ($v->value!==null)
-										$out.="=".$v->value;
-									$out.=";".IGK_LF;
-									$modifier = $v->modifier;
-
-							}				
-					}
-					// igk_wln(__FILE__.":".__LINE__, $modifier, $out);
-					// var_dump($tab);
-					// exit;
-					if ($inline_var && ($modifier!="const")){
-						$out.=";".IGK_LF;
-					} 
-					return $out;
+			"doc"=>0,
+			"noXmlDoc"=>1,
+			"sort"=>function(& $tab){
+				$q = $tab["tab"];
+				// $tab = $m->options->modifierArgs;
+				usort($q, function($a, $b){
+				$r = strcmp($a->modifier, $b->modifier);
+				if ($r==0){
+					$r = strcmp($a->name, $b->name);
 				}
+				return $r;
+				});
+				
+				$tab["tab"] = $q;				
+				$tab = array((object)array("tab"=>$tab, "indentLevel"=>-1));
+			
+			},
+			"render"=>function($tab, $indent, & $tdef=null, $options=null){
+		 
+					$indent = str_repeat($options->IndentChar, $tab->tab["depth"]);
+					//$out.= IGK_LF;
+					$inline_var = igk_gettsv($options, "command/noVarGroup")!=1;
+					$gp = igk_gettsv($options, "command/multilineVars");
+					$modifier = -1;
+					$sp = "";
+					$mp = '';
+					$lf = "";
+					if ($gp)
+						$lf = $options->LF.$indent;
+					$out = "";
+					$tab = $tab->tab["tab"];
+					
+					foreach($tab as $k=>$v){ 
+							if ($inline_var && ($v->modifier!='const' )){
+								if (($modifier==-1) || ($modifier!= $v->modifier)){
+									if (($modifier!==-1)&&($modifier!="const")){
+										$out.=";".IGK_LF;
+									}
+									$modifier = $v->modifier;
+									$out.= $indent.$modifier;
+									if ($gp)
+										$mp = str_repeat(" ", strlen($modifier));
+									else 
+										$mp = "";
+								}else{
+									$out.=",".$lf.$mp;
+								}
+								$out .= " ".$v->name;
+								if (($v->value!==null)&&(!empty($v->value)))
+									$out.= $sp."=".$sp.$v->value;
+							 
+							}
+							else{
+								$out .= $indent.$v->modifier." ".$v->name;
+								if ($v->value!==null)
+									$out.="=".$v->value;
+								$out.=";".IGK_LF;
+								$modifier = $v->modifier;
+
+						}				
+				}
+				// igk_wln(__FILE__.":".__LINE__, $modifier, $out);
+				// var_dump($tab);
+				// exit;
+				if ($inline_var && ($modifier!="const")){
+					$out.=";".IGK_LF;
+				}
+				// igk_wln_e("out: ",$out);
+				return $out;
+			}
 			
 			
 				// $indent = str_repeat($options->IndentChar, $q["depth"]);
@@ -560,8 +463,7 @@ function igk_treat_outdef($def, $options, $nofiledesc=0){
 				if ($_listname == null){
 					$_listname = ["__construct"=>".ctr"];
 				}
-				$t_name = isset($_listname[$v->name])? $v->name: $v->name;
-				$t_out = $indent."///<summary>".__("represent")." ".$t_name." ".$v->type."</summary>".IGK_LF;
+				$t_out = $indent."///<summary>".__("represent")." ".igk_getv($_listname, $v->name, $v->name)." ".$v->type."</summary>".IGK_LF;
 				// TODO DEBUGING
 				// if ($v->name == "igk_agent_androidversion"){
 					// igk_wln("end","igk_agent_androidversion", __LINE__, "intent length: ".strlen($indent), $options->offsetDepth);
@@ -685,9 +587,9 @@ function igk_treat_outdef($def, $options, $nofiledesc=0){
 				"doc"=>1,
 				"render"=>function($v, $indent, & $tdef = null){							 
 					if ($v->definitions && (strpos($v->src, "{")===false)){ 						 
-						 array_push($tdef , $v->definitions);
+						array_push($tdef , $v->definitions);
 					} 		
-					return $v->src."// DIRECT RENDERING";//.IGK_LF;
+					return $v->src.IGK_LF;
 				}
 			)
 			
@@ -708,12 +610,37 @@ function igk_treat_outdef($def, $options, $nofiledesc=0){
 					}
 					$out .= IGK_LF; 
 				}else{
-					
+					$mark ="";
+					if (true){
+						$mark = "@";
+					}
 					// igk_wln("base:::".$mark);
 					if($options->command){
 					// igk_wln("ok----");
-						$out.= igk_treat_getfileheader($options, basename($options->command->inputFile)); 
-					
+						
+						static $defaultHeader = null;
+						if ($defaultHeader === null){	
+							$defaultHeader = "";					
+							$hfile = igk_getv($options->command, "descriptionHeaderFile");	
+							if (!$hfile){
+								$hfile = dirname(__FILE__)."/definition.php";
+							}
+							if(file_exists($hfile)){
+								// igk_wln_e("mark:------------------- ".$mark);
+								$defaultHeader = igk_str_format_bind("// ".$mark."{0|trim}".IGK_LF , explode(IGK_LF, igk_io_read_allfile($hfile))).
+								IGK_LF;
+							} else {								
+								$defaultHeader.="// ".$mark."author: C.A.D. BONDJE DOUE".IGK_LF;
+								$defaultHeader.="// ".$mark."description: ".IGK_LF;
+								$defaultHeader.="// ".$mark."copyright: igkdev © ".date('Y').IGK_LF;
+								$defaultHeader.="// ".$mark."license: Microsoft MIT License. For more information read license.txt".IGK_LF;
+								$defaultHeader.="// ".$mark."company: IGKDEV".IGK_LF;
+								$defaultHeader.="// ".$mark."mail: bondje.doue@igkdev.com".IGK_LF;
+								$defaultHeader.="// ".$mark."url: https://www.igkdev.com".IGK_LF;
+							}
+						}
+						$out.="// ".$mark."file: ".basename($options->command->inputFile).IGK_LF;
+						$out.= $defaultHeader.IGK_LF;
 						// igk_wln_e("bind default header ".$defaultHeader);
 					}
 				}
@@ -732,7 +659,13 @@ function igk_treat_outdef($def, $options, $nofiledesc=0){
 
 			// igk_wln("render def .....". $def_file);
 			$def_file = 1;
-		
+			//treat: global usage
+			// $tab = igk_getv($def,"global");
+			// if ($tab){			 
+				// foreach($tab as $k=>$v){ 			
+					// $out.=  $v->src;
+				// }
+			// }
 			
 			///TASK: treat use
 			// $tab = igk_getv($def,"use");
@@ -1020,12 +953,12 @@ function igk_treat_outdef($def, $options, $nofiledesc=0){
 					if ($doc){					
 						$out.= igk_treat_render_documentation($options, $cv, $indent);
 					}
-
 					$out .= $fc_render($cv, $indent, $tdef, $options);
 				} 
 			}
 			 
-	}	 
+	}	
+
 	return $out;
 }
 function igk_treat_reset_modifier($options){
@@ -1076,13 +1009,6 @@ function igk_treat_append($options, $t, $indent=1){
 		igk_debug_wln("append::: CTX:".$options->context." : LF:".
 		$options->DataLFFlag." INDENT:".$indent." BDepth:".$options->bracketDepth ." cDEPTH:".$options->conditionDepth
 		." t:".$t);
-
-		if (trim($t) == "["){
-			igk_trace();
-			exit;
-		} 
-		 
-
 		$options->DataLFFlag = $options->DataLFFlag || igk_getv($options, "depthFlag");
 		$indent = $indent || $options->DataLFFlag;
 		
@@ -1164,7 +1090,6 @@ function igk_treat_create_options($options=null){
 		"depthIndent"=>0,
 		"output"=>"",
 		"data"=>"",
-		"mark"=>"@", //comment marker
 		
 		"offset"=>0,
 		"DataLF"=>1,
@@ -1216,38 +1141,6 @@ function igk_treat_create_options($options=null){
 	return $obj;
 	
 }
-function igk_treat_defaultheader($options){
-	static $defaultHeader = null;
-	$mark = $options->mark;
-	if ($defaultHeader === null){	
-		$defaultHeader = "";					
-		$hfile = igk_getv($options->command, "descriptionHeaderFile");	
-		if (!$hfile){
-			$hfile = dirname(__FILE__)."/definition.php";
-		}
-		if(file_exists($hfile)){
-			// igk_wln_e("mark:------------------- ".$mark);
-			$defaultHeader = igk_str_format_bind("// ".$mark."{0|trim}".IGK_LF , explode(IGK_LF, igk_io_read_allfile($hfile))).
-			IGK_LF;
-		} else {								
-			$defaultHeader.="// ".$mark."author: C.A.D. BONDJE DOUE".IGK_LF;
-			$defaultHeader.="// ".$mark."description: ".IGK_LF;
-			$defaultHeader.="// ".$mark."copyright: igkdev © ".date('Y').IGK_LF;
-			$defaultHeader.="// ".$mark."license: Microsoft MIT License. For more information read license.txt".IGK_LF;
-			$defaultHeader.="// ".$mark."company: IGKDEV".IGK_LF;
-			$defaultHeader.="// ".$mark."mail: bondje.doue@igkdev.com".IGK_LF;
-			$defaultHeader.="// ".$mark."url: https://www.igkdev.com".IGK_LF;
-		}
-	}
-	return $defaultHeader;
-}
-
-function igk_treat_getfileheader($options, $file){
-	$defaultHeader = igk_treat_defaultheader($options);
-	$s="// ".$options->mark."file: ".basename($file).IGK_LF;
-	$s.= $defaultHeader.IGK_LF;
-	return $s;
-}
 
 function igk_treat_skip(& $t, $start, & $offset, $m){
 	$offset = $start + strlen($m->data[0][0]);
@@ -1295,11 +1188,9 @@ function igk_treat_source($source,  $callback, $tab=null,& $options=null){
 			}
 			
 		}
-		if (($hread = $options->toread) && isset($hread->newLineTreat) &&  ($n_fc = $hread->newLineTreat)){
+		if ($options->toread && ($n_fc = $options->toread->newLineTreat)){
 				$n_fc($t, $sline,  $options);// fnewLineTreat
 		}
-		unset($hread);
-
 		//igk_wln("Line: ".$sline);
 		$flag = 1;
 		$matchFlag = 0;
@@ -1417,10 +1308,17 @@ function igk_treat_handle_operator_flag($m, $type, $t, $start, & $offset=null){
 			}
 		}
 	}
-	
 		
-		//+ start array update array items
-		function igk_treat_update_array_item(& $q, $t, $start, $m){
+///<summary>represent php treat expression</Summary>
+function igk_treat_source_expression($options=null){
+	$tab = array(); 
+	
+	static $defExpression = null;
+	if ($defExpression==null){
+		$defExpression = 1;
+		
+		// start array update array items
+		function update_array_item(& $q, $t, $start, $m){
 			// igk_wln("********************************updateArray");
 			$o = igk_treat_get($m->options);
 			$q_txt = $o;
@@ -1438,10 +1336,9 @@ function igk_treat_handle_operator_flag($m, $type, $t, $start, & $offset=null){
 			$q->markOffset = $ln;// $next;
 			$q->items[] = trim($si);
 		};
-		//+ start array reading
-		function igk_treat_start_array($m, $t, $start, $bracket=1){
-			// igk_trace();
-			// igk_wln_e("********************************startArray");
+		// start array reading
+		function start_array($m, $t, $start, $bracket=1){
+			// igk_wln("********************************startArray");
 			// if ( $m->options->arrayDepth>0){
 				// igk_wln("start array reading: ", $m->options->arrayDepth, $m->options->lineNumber);			
 			// }
@@ -1476,8 +1373,8 @@ function igk_treat_handle_operator_flag($m, $type, $t, $start, & $offset=null){
 						$m->options->arrayDepth + ($m->options->depthFlag? 1 : 0) 
 				];
 		};
-		//+ end reading array
-		function igk_treat_end_array($m, & $t, & $start,& $offset){
+		//end reading array
+		function end_array($m, & $t, & $start,& $offset){
 			// igk_wln("********************************EndArray");
 			static $maxArray = null;
 			if ($maxArray==null)
@@ -1496,7 +1393,7 @@ function igk_treat_handle_operator_flag($m, $type, $t, $start, & $offset=null){
 			
 			$v_o = igk_treat_get($m->options);
 			$q_txt = $v_o.trim(substr($t, 0,$start));
-			igk_treat_update_array_item($q, $t , $start, $m);		
+			update_array_item($q, $t , $start, $m);		
 			$lvg = strlen($q_txt)-strlen($q->before);		
 			
 			
@@ -1560,14 +1457,6 @@ function igk_treat_handle_operator_flag($m, $type, $t, $start, & $offset=null){
 				igk_wln("no items");
 			}
 		};
-///<summary>represent php treat expression</Summary>
-function igk_treat_source_expression($options=null){
-	$tab = array(); 
-	
-	static $defExpression = null;
-	if ($defExpression==null){
-		$defExpression = 1;
-	
 	}
 	
 	
@@ -1641,10 +1530,37 @@ function igk_treat_source_expression($options=null){
 				
 				case "array":
 					// igk_wln("restore:". $m->options->context." modflag:".$m->options->modFlag);
-					$g = igk_treat_init_array_reading($m, $start, $t , $cancel);	
+					// igk_wln_e("array_detection");
+					
+					$cancel = 0;
+					if ($m->options->context == "parameterReading"){
+						if ($m->options->toread->readPMode==0){
+							//parameter type declaration 
+							$cancel=1;
+							$m->options->toread->paramdef="array ";
+						}
+						// igk_wln("param reading: ".$m->options->toread->readPMode);
+					}
+					if (is_object($m->options->toread) && 
+						($m->options->toread->type =="function") && 
+					    ($m->options->toread->readingMode == "3") && 
+						( $m->options->context == "definitionDeclaration")
+						){
+						 $cancel = 1;
+						 // igk_wln("t:".$t);
+						 // //	$t = substr($t, $start+ strlen($m->data["operator"][0]));
+						 // igk_wln("t:".$t);
+						 // igk_exit();
+					}
 					if ($cancel){
-						return $g;
-					}			
+						igk_treat_append($m->options, "array ", 0);
+						$t = substr($t, $start+ strlen($m->data["operator"][0]));
+						//$offset = $start + strlen($m->data[0][0])+1;
+						
+						$offset = 0;
+						return $t;
+					} 
+					start_array($m, $t, $start, 0);// wait for "("
 					break;
 			}
 			
@@ -1652,8 +1568,7 @@ function igk_treat_source_expression($options=null){
 			
 			switch($idx[0])
 			{
-				case "array":	 
-						
+				case "array":
 					$m->options->depthFlag = 0;
 					$indent = 0;
 					$sp = "";
@@ -1682,13 +1597,14 @@ function igk_treat_source_expression($options=null){
 				}
 				break;
 			}
-
-			
 			igk_treat_append($m->options, substr($t, 0, $start).$idx[0].$sp, $indent);
 			$t = substr($t, $offset);
 			$offset = 0;
-			//+ change the toread to maching context
 			$m->options->toread = $idx[0];
+			// igk_wln("end condition depth:1");
+			// $m->options->conditionDepth = 0;
+
+			
 			return $t;
 		}
 	));
@@ -1768,7 +1684,7 @@ function igk_treat_source_expression($options=null){
 							$h = 1;
 							$m->options->DataLFFlag=0;
 							igk_treat_append($m->options, $v.$g, 0);
-							igk_treat_update_array_item($q, null, -strlen($g), $m);
+							update_array_item($q, null, -strlen($g), $m);
 							 
 						}
 					break; 
@@ -1795,25 +1711,13 @@ function igk_treat_source_expression($options=null){
 							$g = " ".$g." ";						
 						}
 						// igk_wln("context ***************************", $m->options->context);
-// 						if (!$m->options->DataLFFlag && preg_match("/(parameterReading|modifierReading|global|definitionDeclaration)/", $m->options->context)){
-// // igk_wln_e("no depth", $m->options->DataLFFlag );							
-// 							$m->options->DataLFFlag = 0;
-// 						}else{
-// 							$m->options->DataLFFlag = 1;
-						
-// 						}
-	// igk_wln_e("changing ::::: context: ", 
-	// 						"bracketVarFlag=".$m->options->bracketVarFlag,
-	// 						$m->options->context, 	$m->options->DataLFFlag);
-
-						if ($m->options->bracketVarFlag){
-							$m->options->DataLFFlag = 1;
-							igk_treat_append($m->options, "", 1);
+						if (!$m->options->DataLFFlag && preg_match("/(parameterReading|modifierReading|global|definitionDeclaration)/", $m->options->context)){
+// igk_wln_e("no depth", $m->options->DataLFFlag );							
 							$m->options->DataLFFlag = 0;
-							$m->options->bracketVarFlag = 0;
+						}else{
+							$m->options->DataLFFlag = 1;
+							//igk_wln("changing ::::: context: ", $m->options->context);
 						}
-						// igk_wln_e("flag = ".$m->options->DataLFFlag, "context",  $m->options->context, $v); 
-						// $v_indent = 1;
 						break;
 					case "->{": //litteral bracket support
 						$m->options->bracketVarFlag = 1;
@@ -1825,16 +1729,13 @@ function igk_treat_source_expression($options=null){
 						$m->options->bracketDepth++;
 						break;
 					case "->":
-						$m->options->bracketVarFlag = 0;
 						$m->options->objectPointerFlag = 1;
-						break;
-					case "::": 
-						$m->options->bracketVarFlag = 0;
 						break;
 					case "<=":
 					case ">=":
 					case "++":
-					case "--":					
+					case "--":
+					case "::": 
 					case "!":
 					case "~":
 						
@@ -1864,7 +1765,8 @@ function igk_treat_source_expression($options=null){
 				}
 		
 				if (!$h)
-					igk_treat_append($m->options, $v.$g, $v_indent);				
+				igk_treat_append($m->options, $v.$g, $v_indent);
+				
 				$t = substr($t, $start+$ln);
 				$offset = 0;
 			}
@@ -1931,23 +1833,17 @@ array_unshift($tab, (object)array(
 				$m->options->bracketDepth--;
 				$lf = 1;
 				if ($m->options->bracketVarFlag){
-					// igk_wln("reset bracket");
 					$m->options->bracketVarFlag = 0; //reset
 					$lf = 0;
-					$m->options->DataLFFlag = 0;
-				}else {
-					$m->options->DataLFFlag = 1;
 				}
 				if ($m->options->FormatText){
-					// igk_wln("format text", $lf, $m->options->bracketVarFlag, $m->options->DataLFFlag);
-					// $lf = 0;
-						$g  = trim(substr($t, 0, $start));						
+						$g  = trim(substr($t, 0, $start));
+						
 						if (!empty($g)){
 							igk_treat_append($m->options, $g."}", $lf);							
 						}else{
 							igk_treat_append($m->options, "}", $lf); 
 						}
-						$lf  = 1;
 				}else{
 					igk_treat_append($m->options, "}");
 				}
@@ -1989,7 +1885,6 @@ array_unshift($tab, (object)array(
 						// break;
 					// case "->":
 				$ln_segment = 1;
-				$m->options->bracketVarFlag = 1;
 				if ($m->options->objectPointerFlag){
 					// igk_wln_e("object pointer .....");
 					$ln_segment = 0;
@@ -2054,32 +1949,13 @@ array_unshift($tab, (object)array(
 			}
 			if ($d=="["){
 				$m->options->conditionDepth++;
-				$m->options->openHook++;	
-				$cancel = 0;
-				//++
-				igk_treat_bind_array($m, $offset ,  $start, $t, $cancel);
-				//igk_wln_e("detect somme ".$m->options->conditionDepth, $m->options->toread, $cancel); 
-				// igk_treat_start_array($m, $t, $start);
+				$m->options->openHook++;				
+				start_array($m, $t, $start);
 			}else{
 				// igk_wln("decrease condition depth");
 				$m->options->conditionDepth--;
 				$m->options->openHook--;
-				igk_treat_end_array($m, $t, $start, $offset); // end bracket array
- 
-				$depthf=0; 
-			//	igk_treat_restore_context($m->options, 1);
-				$soutput = igk_treat_get($m->options);
-				igk_wln("before : ".$m->option->toread);	
-
-				igk_treat_restore_context($m->options, 1);
-				$s = trim(substr($t, 0, $start+1));
-				igk_treat_append($m->options, $s, 0);
-				$t = ltrim(substr($t, $offset));
-				$offset = 0; 	
-				igk_wln_e($m->option->toread);			
-				// igk_wln_e(" content : ". igk_treat_get($m->options), $s);
-				// ->context,
-				// $m->option->toread,  $d, $t, $s);
+				end_array($m, $t, $start, $offset); // end bracket array
 			}
 			igk_treat_handle_char($t, $start, $offset, $d, $m);			
 			$offset = $start+strlen($m->data[0][0]);
@@ -2117,7 +1993,7 @@ array_unshift($tab, (object)array(
 				}
 				
 			}else{
-				$m->options->conditionDepth++; 
+				$m->options->conditionDepth++;
 			}
 			// igk_wln("after ".$m->options->conditionDepth);
 			if($m->options->conditionDepth<0){
@@ -2130,13 +2006,11 @@ array_unshift($tab, (object)array(
 			igk_treat_handle_char($t, $start, $offset, $d, $m);
 			
 			// if ($d==")"){
+				// igk_wln("content : ".$m->options->context. " cd:".$m->options->conditionDepth);
 			// }
 			switch($m->options->context){				
 				case "controlConditionalHandle":
 					$depthf = 1;
-
-					// igk_wln_e("bas ; ".$m->options->toread);
-
 					if ($m->options->toread=="array"){
 						$q = $m->options->arrayEntity[count($m->options->arrayEntity)-1]; // $m->options->
 						 // igk_wln("finish array litteral ? ".$q->litteral, $d, "hookDeepth:".$q->hookDepth);
@@ -2151,7 +2025,7 @@ array_unshift($tab, (object)array(
 										$q->hookDepth--;
 										
 										if($q->hookDepth<=0){	
-											igk_treat_end_array($m, $t, $start, $offset); 
+											end_array($m, $t, $start, $offset); 
 											$depthf=0; 
 										//	igk_treat_restore_context($m->options, 1);
 											$soutput = igk_treat_get($m->options);
@@ -2273,11 +2147,7 @@ array_unshift($tab, (object)array(
 			// "toreadmode:".$m->options->toread->mode
 			
 		 // );
-		 //disable bracket flag instruction 
-		 if ($m->options->bracketVarFlag)
-		 	$m->options->bracketVarFlag = 0;
 			
-		 // igk_wln_e( __FILE__.":".__LINE__, $m->options->bracketVarFlag ,  "finisht >>>>>>>>>>>>>>>>>>>>");
 			if (($toread = $m->options->toread) && is_object($toread) && ($toread->mode<4) && 
 			($fc = $toread->endTreat)){
 				$s = rtrim(igk_treat_get($m->options).substr($t, 0, $start).$s).$m->options->LF;
@@ -2288,7 +2158,7 @@ array_unshift($tab, (object)array(
 				$offset = 0;
 				return $t;
 			}
-			// igk_debug_wln(":::: - >" . $m->options->context);
+			igk_debug_wln(":::: - >" . $m->options->context);
 			switch($v_context = $m->options->context){
 				case "controlConditionalHandle":
 				 
@@ -2340,10 +2210,10 @@ array_unshift($tab, (object)array(
 					// break;
 				default:
 				
-				$gg = trim(substr($t, 0, $start)).$s;					
-				$h = 0;
-				$def = igk_treat_get($m->options);
-				// igk_wln("modifier ...............".$def, $m->options->modifier);
+					$gg = trim(substr($t, 0, $start)).$s;
+					
+					$h = 0;
+					$def = igk_treat_get($m->options);
 					if (!empty($m->options->modifier)){					
 						
 						// igk_wln("modflag:".$m->options->modFlag);
@@ -2358,16 +2228,17 @@ array_unshift($tab, (object)array(
 						
 						// igk_wln_e("base:::finish");
 						// var_dump($m->options->modifierArgs);
-						if (is_object($cop = $m->options->toread) && igk_treat_handle_modifier($m->options))
-						{  
+						if (is_object($m->options->toread) && igk_treat_handle_modifier($m->options))
+						{ 
+							// $o = $def.$gg;
+							// igk_wln("out:".$o);
+							// igk_wln("out2: ".$def); 
+							// var_dump($m->options->modifierArgs);
 							$h =1;
 						}
 						// igk_wln($m->options->context);
 						igk_treat_reset_modifier($m->options);
-						
-						// igk_wln($cop);
-					//	igk_wln_e("output : ".$def.$gg);//, $h, $m->options->totreat, $t);
-					 
+						// igk_exit();
 						
 					}
 					if (!$h){
@@ -2412,15 +2283,14 @@ array_unshift($tab, (object)array(
 						
 						
 					}
-
 					$t = ltrim(substr($t, $start+ strlen($d)));					
 					$offset = 0;
-					// igk_debug_wln("????????????t:".$t." : ".$offset. " ".$m->options->DataLFFlag, $gg);
+					igk_wln("????????????t:".$t." : ".$offset. " ".$m->options->DataLFFlag);
 				break;
 			}
 
-			$m->options->DataLFFlag = 1;			
-			$m->options->bracketFlag = 0; 
+			$m->options->DataLFFlag = 1;
+			// igk_wln("finisht >>>>>>>>>>>>>>>>>>>>");
 			return $t;
 		}
 	));
@@ -2665,7 +2535,7 @@ array_unshift($tab, (object)array(
 		if (is_object($m->options->toread))
 			$o = igk_getv($m->options->toread->definitions,"vars");
 		
-		igk_treat_set_context($m->options, "modifierReading", $m->options->mode, array("data", "DataLFFlag", "bracketVarFlag"));
+		igk_treat_set_context($m->options, "modifierReading", $m->options->mode, array("data", "DataLFFlag"));
 		$mod = trim($modifier); 
 		$m->options->data = $mod." ";
 		$m->options->DataLFFlag=0;
@@ -3065,7 +2935,7 @@ array_unshift($tab, (object)array(
 			$totreat->startLine = $m->options->lineNumber;
 			$totreat->name = "";
 			$totreat->options=array();			
-			// $totreat->definition = null;
+			$totreat->definition = null;
 			$totreat->definitions = array();
 			$totreat->src = "";
 			$totreat->mode = 0;// 0
@@ -3357,16 +3227,7 @@ array_unshift($tab, (object)array(
 							
 							$gs = rtrim(substr($src, 0, $pos )).$options->LF;
 							$indent = str_repeat($options->IndentChar, $totreat->indentLevel);
-							$rf = "";
-							if (($totreat->type=="namespace") && (isset($totreat->def))){
-								//+ correct namespace source rendering
-								$rf = substr($gs, ($_tpos = strpos($gs, "{"))+1); 
-								$out = rtrim($out);
-								$gs = $indent.ltrim(substr($gs,0, $_tpos+1).$options->LF);
-								// $rf ="********";
-								$totreat->globalSrc = $rf;
-							} 
-							$src = $gs.$out.$rf.$indent."}".$options->LF;
+							$src = $gs.$out.$indent."}".$options->LF;
 									
 						}
 						// igk_wln("3:");
@@ -3455,7 +3316,7 @@ array_unshift($tab, (object)array(
 						$offset = 0;
 						return $t;
 					} 
-					$comment = substr($t, $start);
+					$comment = substr(substr($t, $start));
 					$m->options->commentInfo[] = $comment;
 					$offset = strlen($t)+1; 
 					// igk_wln("test:", $t, $m->options->context);
@@ -4296,8 +4157,7 @@ foreach(igk_io_getfiles($dir, "/\.(.)+$/i", true, $ignore_dir) as $k=>$v)
 			if (strpos($src, "<?php")===0){
 				$src = igk_str_read_treat_source($src, $options);
 			}
-			$outfile = $outdir."/".$n;
-			igk_io_w2file($outfile, $src);
+			igk_io_w2file($outdir."/".$n,$src);
 			$treat++;
 	
 	}else{
@@ -4399,7 +4259,11 @@ function igk_treat_generator($def, $callbacks){
 		}
 		
 		 
-	
+		//treat: global usage
+		$tab = igk_getv($def,"global");
+		if ($tab && isset($callbacks["global"])){			 
+			call_user_func_array($callbacks["global"], array_merge(array($tab, & $tdef), $tab_args));
+		}
 		
 		///TASK: treat use
 		$tab = igk_getv($def,"use");
@@ -4408,11 +4272,6 @@ function igk_treat_generator($def, $callbacks){
 				return $a->name <=>$b->name;
 			});
 			call_user_func_array($callbacks["use"], array_merge(array($tab, & $tdef), $tab_args));
-		}
-		//treat: global usage
-		$tab = igk_getv($def,"global");
-		if ($tab && isset($callbacks["global"])){			 
-			call_user_func_array($callbacks["global"], array_merge(array($tab, & $tdef), $tab_args));
 		}
 
 		//treat: vars
@@ -4636,14 +4495,9 @@ if ($helps){
 			}
 		}
 	});
-	$lft = str_pad("", 36, " ");
 	foreach($keys as $k){
 		$v = $helps[$k];
-
-		// $rt = str_split($v, 60);
-
-		// $v = implode("\n".$lft, $rt);
-		igk_wl(str_repeat(" ", 2)."\e[1;32m". str_pad($k, 30, " ")."\e[0m".str_repeat(" ", 2). ": " .$v."\n");
+		igk_wl("    \e[1;32m". str_pad($k, 20, " ")."\e[0m".str_repeat(" ", 2). ": " .$v."\n");
 	}
 }
 }
@@ -4899,7 +4753,6 @@ function igk_treat_filecommand($command){
 	//
 
 $mp = igk_treat_source($source, function($out, $option){
-	
 	if (!empty($option->data)){
 		
 		igk_wln("cDepth: ".$option->conditionDepth);
@@ -4931,161 +4784,19 @@ $mp = igk_treat_source($source, function($out, $option){
 		}
 		
 		if (igk_getv($option->command, "noTreat")!=1){
-			$def = "";
-			if (igk_getv($option->command, "singleFilePerClass")==1){
 			 
-				($outdir = igk_getv($option->command,"singleFileOutput")) || 
-				($outdir = igk_getv($option->command,"outDir")) ||
-			    ($outdir = dirname($option->command->outFile));
-
-				
-				// igk_wln_e("info ....= ", $outdir, $option->command->outDir);
-				if (!empty($outdir)){
-
-				$tdef = (object)array();
-				$globaloutput = array();
-				foreach($option->definitions as $k=>$v){
-					if ($k=="lastTreat")
-						continue;
-					$NS_N = "";
-					//
-					$defp = array((object)array("ns"=>"", "d"=>$v) );
-					$gsrc = "";
-					while($q = array_pop($defp)){
-				 
-						foreach($q->d as $def){
-							switch(strtolower($def->type))
-							{
-								case "function":
-									if (empty($q->ns)){ 
-										$tdef->function[]= $def;
-									}else{
-										$globaloutput[$q->ns]["func"][] = $def;										
-									}
-									continue 2;
-								break;
-								case "namespace": 
-								{  
-									//single line namespace declaration or {}
-									 
-									if (isset($def->globalSrc) && !empty($gnssrc = $def->globalSrc)){
-										$nsdec = "";
-										if (isset($def->def)){
-											$nsdec.= $def->def.";".IGK_LF;//.$src."}";
-		
-										}else 	
-											$nsdec .= $def->src;//.$src;
-
-										$globaloutput[$def->name]["nsdec"] = $nsdec;
-										$globaloutput[$def->name]["gsrc"][] = $gnssrc;
-										unset($nsdec, $ngssrc);
-									}
-									foreach($def->definitions as $nt=>$mf){
-										if($nt=="use"){
-											foreach($mf as $rr){
-												$gsrc.= $rr->src. IGK_LF;
-											}
-											continue;
-										}								
-										array_push($defp, (object)array("ns"=>$def->name, "d"=> $mf ,"p"=>$def, "src"=> & $gsrc));
-									}
-	
-									continue 2;
-								}
-								break;
-								case "use": 
-									if (empty($q->ns)){ 
-										$tdef->use[]= $def;
-									} 
-									continue 2;								 
-								break;
-								default:
-								break;
-							}
-						
-
-							$src = $gsrc.$def->src;
-							$nsdef = "";
-							if(!empty($ns = $q->ns)){
-								$ns.="/";
-								// igk_wln_e("qrc : ", $q);//, " : ", $gsrc);
-								if (isset($q->p->def)){
-									$nsdef.= $q->p->def."{".IGK_LF.$src."}";
-
-								}else 	
-									$nsdef .= $q->p->src.$src;
-							}else{
-								$nsdef = $src;
-							}
-
-							
-							$f = $outdir."/".$ns.$def->name.".".strtolower($def->type).".php";
-							// igk_wln("outto: ".$f, $src, $nsdef);
-							// if (IGKIO::CreateDir(dirname($f))){
-							igk_io_w2file($f , "<?php\n".igk_treat_getfileheader($option, $f).$nsdef);
-							// }
-							
-						 
-
-						}
-					}
- 
-				}
-				
-				
-				
-		
-				if (count($globaloutput)>0){
-					$indent = str_repeat($option->IndentChar, 1);
-					foreach($globaloutput as $kk=>$tt){
-						$_tout = "";
-
-						$_tout .= $tt["nsdec"].IGK_LF;
-
-						if (isset($tt["func"]) && ($funcs = $tt["func"])){
-							//sort func
-							usort($funcs, function($a, $b){
-								return strcmp( $a->name, $b->name);
-							});
-							// igk_wln_e($funcs);
-							foreach($funcs as $_gfc){
-								$_tout .= $_gfc->src;
-							}
-						}
-
-						foreach($tt["gsrc"] as $_t){
-							$_tout .=  $_t;
-						}
-						$_tout = preg_replace("#^".$indent."#im", "", $_tout);
-						$f = $outdir."/".$kk."/_global.ns.php";
-						
-						igk_io_w2file($f, "<?php\n".igk_treat_getfileheader($option, $f).$_tout);
-					}
-
-			
-				}
-				else{
-					//igk_wln_e("tdef ::: ", $tdef);
-					$def = igk_treat_outdef($tdef, $option);
-				}
-			}
-				// igk_wln($globaloutput);
-				// igk_wln_e("single file per class ... 1", $out);
-			}
-			else 
-				$def = igk_treat_outdef($option->definitions, $option);
-
 			$regx = "/^\<\\?(php)?(\\s*|$)/";
 			$s = "";
 			$lf = (empty($option->LF)? $option->LF:IGK_LF);
 			
 			if (preg_match($regx, $out)){			
+				$def = igk_treat_outdef($option->definitions, $option);
 				$s = "<?php";
 				$out = preg_replace($regx, "", $out);
 				$s .= $lf.$def.$out;
 			}else{
 				$option->noFileDesc = 1;
-				// $def = igk_treat_outdef($option->definitions, $option);
+				$def = igk_treat_outdef($option->definitions, $option);
 				// igk_wln("OUT2:".$out);
 				if (($p = igk_getv($option, 'startCGIOffSet'))>0){
 					$s .= substr($out, 0, $p).$lf.$def.substr($out, $p);
@@ -5105,11 +4816,6 @@ if (igk_getv($command, "verbose", 0)==1){
 		igk_wln("output:\n".$mp);
 	}
 }
-// ask for single file per class 
-if (igk_getv($command, "singleFilePerClass")==1){
-	// igk_wln("single file per class ...");
-}
-
 
 $c = $command->outFile;
 if (isset($c)){
@@ -5123,14 +4829,11 @@ if (isset($c)){
 				igk_wln_e("checking failed: ".$c);
 			}
 		}else{
-			igk_wln("not file: ".$c);
+			igk_wln("not file: ".$f);
 		}
 		// igk_wln_e("base: :::-----");
 	}
 }
-
-
-
 }
 
 igk_treat_reg_command("-local", function($v, $command, $c){	 
@@ -5269,8 +4972,7 @@ igk_treat_reg_command("-d, --inputDir", function($v, $command, $c){
 		
 		$command->{"exec"} = function($command){ 
 		 if(!isset($command->outDir)){
-			igk_die("outDir not set");
-			// $command->outDir = "d:/temp/treating/public";
+			 $command->outDir = "d:/temp/treatin/public";
 		 }
 		ini_set("max_execution_time", 0);
 		$dir = $command->inDir;
@@ -5487,18 +5189,6 @@ igk_treat_reg_command("--no-vscode", function($v, $t, $c){
 	$t->noVSCode = 1;
 }, "ignore vscode folder for treatment");
 
-igk_treat_reg_command("--single-file-per-class", function($v, $t, $c){
-	$t->singleFilePerClass = 1;
-}, "for armonic to generate single file per class or interface");
-
-
-igk_treat_reg_command("--single-file-output", function($v, $t, $c){
-	if ($t->waitForNextEntryFlag){
-		$t->singleFileOutput = $v;
-	}
-	$t->waitForNextEntryFlag = 1;
-}, "directory for single file output");
-
 
 igk_treat_reg_command("--ignore-pattern", function($v, $command, $c){
 	// igk_wln_e("define....".$v);
@@ -5572,7 +5262,7 @@ igk_treat_reg_command("--no-vargroup", function($v, $command, $c){
 
 igk_treat_reg_command("--multi-linevar", function($v, $command, $c){
 	$command->multilineVars = 1; 
-}, "on variable grouping - force to write one variable per line. variable grouping is the defaultmode.");
+}, "on variable grouping - declare one variable per line.");
 
 
 igk_treat_reg_command("--text-lineConcatenation", function($v, $command, $c){

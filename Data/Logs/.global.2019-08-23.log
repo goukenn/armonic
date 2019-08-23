@@ -1,0 +1,48 @@
+23-08-2019 12:20:00:: - [igk_sys_g_handle_error] - severity:8 Undefined property: stdClass::$option D:\dev\2019\php\src\armonic\armonic.php:2077
+23-08-2019 12:20:00:: - [igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$option
+filename :D:\dev\2019\php\src\armonic\armonic.php
+line :2077
+request_uri :
+query_string :
+
+23-08-2019 12:20:00:: - [igk_sys_g_handle_error] - severity:8 Trying to get property 'toread' of non-object D:\dev\2019\php\src\armonic\armonic.php:2077
+23-08-2019 12:20:00:: - [igk_sys_g_handle_error] - /!\severity :8
+message :Trying to get property 'toread' of non-object
+filename :D:\dev\2019\php\src\armonic\armonic.php
+line :2077
+request_uri :
+query_string :
+
+23-08-2019 12:20:43:: - [igk_sys_g_handle_error] - severity:8 Undefined property: stdClass::$option D:\dev\2019\php\src\armonic\armonic.php:2072
+23-08-2019 12:20:43:: - [igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$option
+filename :D:\dev\2019\php\src\armonic\armonic.php
+line :2072
+request_uri :
+query_string :
+
+23-08-2019 12:20:43:: - [igk_sys_g_handle_error] - severity:8 Trying to get property 'toread' of non-object D:\dev\2019\php\src\armonic\armonic.php:2072
+23-08-2019 12:20:43:: - [igk_sys_g_handle_error] - /!\severity :8
+message :Trying to get property 'toread' of non-object
+filename :D:\dev\2019\php\src\armonic\armonic.php
+line :2072
+request_uri :
+query_string :
+
+23-08-2019 12:20:43:: - [igk_sys_g_handle_error] - severity:8 Undefined property: stdClass::$option D:\dev\2019\php\src\armonic\armonic.php:2079
+23-08-2019 12:20:43:: - [igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$option
+filename :D:\dev\2019\php\src\armonic\armonic.php
+line :2079
+request_uri :
+query_string :
+
+23-08-2019 12:20:43:: - [igk_sys_g_handle_error] - severity:8 Trying to get property 'toread' of non-object D:\dev\2019\php\src\armonic\armonic.php:2079
+23-08-2019 12:20:43:: - [igk_sys_g_handle_error] - /!\severity :8
+message :Trying to get property 'toread' of non-object
+filename :D:\dev\2019\php\src\armonic\armonic.php
+line :2079
+request_uri :
+query_string :
+
