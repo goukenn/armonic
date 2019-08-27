@@ -1,0 +1,27 @@
+<armonic>
+<test name="afterelse" >
+	<input>
+<![CDATA[<?php
+$x=function(& $tab, $start, & $offset, $n){
+    if($tab->def[$n-1] == '('){
+        $m=1;
+    }
+    else{} $m->options->DataLF=0;
+    return 8;
+};
+]]>
+</input>
+<output>
+<![CDATA[<?php
+$x=function(& $tab, $start, & $offset, $n){
+    if($tab->def[$n-1] == '('){
+        $m=1;
+    }
+    else{}
+    $m->options->DataLF=0;
+    return 8;
+};]]>
+</output>
+</test>
+
+</armonic>

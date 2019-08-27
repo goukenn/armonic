@@ -1,0 +1,16 @@
+<armonic>
+<test name="afterelse" >
+	<input><![CDATA[<?php
+if($m->options->switchcaseFlag){
+	$h=1;}
+else{}$g=$g." ";]]>
+</input>
+		<output><![CDATA[<?php
+if($m->options->switchcaseFlag){
+    $h=1;
+}
+else{}
+$g=$g." ";]]>
+</output>
+</test>
+</armonic>

@@ -1,0 +1,18 @@
+<armonic>
+<test name="afterelse" >
+	<input>
+<![CDATA[<?php
+if(true){ ?><img src="<?= $admin_bg ?>" /><?php } echo "goo";
+]]>
+</input>
+<output>
+<![CDATA[<?php
+if(true){
+    ?><img src="<?= $admin_bg ?>" />
+<?php 
+}
+echo "goo";]]>
+</output>
+</test>
+
+</armonic>

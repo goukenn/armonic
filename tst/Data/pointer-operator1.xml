@@ -1,0 +1,9 @@
+<armonic>
+<test name="variable">
+    <input><![CDATA[<?php
+$command->marche->information->$data->{"exec"}=null;]]></input>
+<output><![CDATA[<?php
+$command->marche->information->$data->{"exec"}=null;]]>
+</output>
+</test>
+</armonic>

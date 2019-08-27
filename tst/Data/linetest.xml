@@ -1,0 +1,16 @@
+<armonic>
+<test name="inlinetest" >
+	<input><![CDATA[<?php
+	function x (){static $y = null; if ($y==null){ $y= array();}}]]></input>
+<output><![CDATA[<?php
+///<summary>Represente x function</summary>
+function x(){
+    static $y=null;
+    if($y == null){
+        $y=array();
+    }
+}
+]]>
+</output>
+</test>
+</armonic>

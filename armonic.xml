@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<doc xmlns="https://schema.igkdev.com/balafon/armonic/xmldoc" code="php">
+	<script>
+		<name>armonic.php</name>
+	</script>
+	<members>
+		<uses />
+		<functions>
+			<member name="igk_treat_append">
+					<summary>Represente igk_treat_append function</summary>
+					<param name="options" />
+					<param name="t" />
+					<param name="indent" default="1" />
+			</member>
+			<member name="igk_treat_bind_array">
+					<summary>Represente igk_treat_bind_array function</summary>
+					<param name="m" />
+					<param name="offset" />
+					<param name="start" />
+					<param name="t" ref="true" />
+					<param name="cancel" ref="true" />
+			</member>
+			<member name="igk_treat_bind_data">
+					<summary>Represente igk_treat_bind_data function</summary>
+					<param name="command" default="null" />
+			</member>
+			<member name="igk_treat_check_command_handle">
+					<summary>Represente igk_treat_check_command_handle function</summary>
+					<param name="command" />
+					<param name="throw" default="1" />
+			</member>
+			<member name="igk_treat_command">
+					<summary>Represente igk_treat_command function</summary>
+			</member>
+			<member name="igk_treat_converttodockblocking">
+					<summary>Represente igk_treat_converttodockblocking function</summary>
+					<param name="doc" />
+					<param name="options" />
+			</member>
+			<member name="igk_treat_create_options">
+					<summary>Represente igk_treat_create_options function</summary>
+					<param name="options" default="null" />
+			</member>
+			<member name="igk_treat_defaultheader">
+					<summary>Represente igk_treat_defaultheader function</summary>
+					<param name="options" />
+			</member>
+			<member name="igk_treat_end_array">
+					<summary>Represente igk_treat_end_array function</summary>
+					<param name="m" />
+					<param name="t" ref="true" />
+					<param name="start" ref="true" />
+					<param name="offset" ref="true" />
+			</member>
+			<member name="igk_treat_execute_command">
+					<summary>Represente igk_treat_execute_command function</summary>
+					<param name="c" />
+			</member>
+			<member name="igk_treat_filecommand">
+					<summary>Represente igk_treat_filecommand function</summary>
+					<param name="command" />
+			</member>
+			<member name="igk_treat_generator">
+					<summary>Represente igk_treat_generator function</summary>
+					<param name="def" />
+					<param name="callbacks" />
+			</member>
+			<member name="igk_treat_get">
+					 PRECEDENT + DataLF  [+ INDENT ] + $t
+			</member>
+			<member name="igk_treat_get_ignore_regex">
+					<summary>Represente igk_treat_get_ignore_regex function</summary>
+					<param name="command" />
+			</member>
+			<member name="igk_treat_getfileheader">
+					<summary>Represente igk_treat_getfileheader function</summary>
+					<param name="options" />
+					<param name="file" />
+			</member>
+			<member name="igk_treat_handle_char">
+					<summary>Represente igk_treat_handle_char function</summary>
+					<param name="t" ref="true" />
+					<param name="start" />
+					<param name="offset" ref="true" />
+					<param name="d" />
+					<param name="m" />
+			</member>
+			<member name="igk_treat_handle_funcparam">
+					<summary>Represente igk_treat_handle_funcparam function</summary>
+					<param name="ch" />
+					<param name="t" />
+					<param name="start" />
+					<param name="m" />
+					<param name="cancel" ref="true" />
+			</member>
+			<member name="igk_treat_handle_html">
+					<summary>Represente igk_treat_handle_html function</summary>
+					<param name="t" ref="true" />
+					<param name="start" />
+					<param name="offset" ref="true" />
+					<param name="m" />
+					<param name="found" default="null" ref="true" />
+			</member>
+			<member name="igk_treat_handle_modargs">
+					<summary>Represente igk_treat_handle_modargs function</summary>
+					<param name="t" ref="true" />
+					<param name="start" />
+					<param name="offset" ref="true" />
+					<param name="g" />
+					<param name="m" />
+			</member>
+			<member name="igk_treat_handle_modifier">
+					<summary>Represente igk_treat_handle_modifier function</summary>
+					<param name="options" />
+			</member>
+			<member name="igk_treat_handle_operator_flag">
+					<summary>Represente igk_treat_handle_operator_flag function</summary>
+					<param name="m" />
+					<param name="type" />
+					<param name="t" />
+					<param name="start" />
+					<param name="offset" default="null" ref="true" />
+			</member>
+			<member name="igk_treat_handle_use">
+					<summary>Represente igk_treat_handle_use function</summary>
+					<param name="m" />
+					<param name="type" />
+			</member>
+			<member name="igk_treat_init_array_reading">
+					<summary>Represente igk_treat_init_array_reading function</summary>
+					<param name="m" />
+					<param name="start" />
+					<param name="t" ref="true" />
+					<param name="cancel" ref="true" />
+			</member>
+			<member name="igk_treat_lang_res">
+					<summary>Represente igk_treat_lang_res function</summary>
+					<param name="n" />
+			</member>
+			<member name="igk_treat_lib">
+					<summary>Represente igk_treat_lib function</summary>
+					<param name="autocheck" default="1" />
+					<param name="verbose" default="1" />
+			</member>
+			<member name="igk_treat_modifier">
+					<summary>Represente igk_treat_modifier function</summary>
+					<param name="m" />
+			</member>
+			<member name="igk_treat_modifier_getname">
+					<summary>Represente igk_treat_modifier_getname function</summary>
+					<param name="base_def" />
+					<param name="t" />
+					<param name="start" />
+					<param name="m" />
+			</member>
+			<member name="igk_treat_modifier_getvalue">
+					<summary>internal use. read modifier value on mode 2</summary>
+			</member>
+			<member name="igk_treat_outdef">
+					<summary>treat output: </summary>
+			</member>
+			<member name="igk_treat_pop_state">
+					<summary>use igk_treat_restore_context</summary>
+			</member>
+			<member name="igk_treat_push_state">
+					<summary>use igk_treat_restore_context</summary>
+			</member>
+			<member name="igk_treat_reg_command">
+					<summary>Represente igk_treat_reg_command function</summary>
+					<param name="k" />
+					<param name="v" />
+					<param name="help" default="null" />
+			</member>
+			<member name="igk_treat_render_data">
+					<summary>Represente igk_treat_render_data function</summary>
+					<param name="tab" />
+					<param name="title" default="null" />
+					<param name="r" ref="true" />
+			</member>
+			<member name="igk_treat_render_documentation">
+					<summary>Represente igk_treat_render_documentation function</summary>
+					<param name="options" />
+					<param name="v" />
+					<param name="indent" />
+			</member>
+			<member name="igk_treat_reset_flags">
+					<summary>Represente igk_treat_reset_flags function</summary>
+					<param name="options" />
+			</member>
+			<member name="igk_treat_reset_modifier">
+					<summary>Represente igk_treat_reset_modifier function</summary>
+					<param name="options" />
+			</member>
+			<member name="igk_treat_restore_context">
+					<summary>Represente igk_treat_restore_context function</summary>
+					<param name="option" />
+			</member>
+			<member name="igk_treat_set">
+					<summaryr>set or replace current output</summmary>
+					<param name="options">definition options</param>
+					<param name="text">new text</param>
+			</member>
+			<member name="igk_treat_set_context">
+					<summary>Represente igk_treat_set_context function</summary>
+					<param name="option" />
+					<param name="context" />
+					<param name="mode" />
+					<param name="states" default="null" />
+					<param name="tag" default="null" />
+			</member>
+			<member name="igk_treat_show_usage">
+					<summary>Represente igk_treat_show_usage function</summary>
+			</member>
+			<member name="igk_treat_skip">
+					<summary>Represente igk_treat_skip function</summary>
+					<param name="t" ref="true" />
+					<param name="start" />
+					<param name="offset" ref="true" />
+					<param name="m" />
+			</member>
+			<member name="igk_treat_source">
+					<summary>Represente igk_treat_source function</summary>
+					<param name="source" />
+					<param name="callback" />
+					<param name="tab" default="null" />
+					<param name="options" default="null" ref="true" />
+			</member>
+			<member name="igk_treat_source_expression">
+					<summary>represent php treat expression</Summary>
+			</member>
+			<member name="igk_treat_start_array">
+					<summary>Represente igk_treat_start_array function</summary>
+					<param name="m" />
+					<param name="t" />
+					<param name="start" />
+					<param name="bracket" default="1" />
+			</member>
+			<member name="igk_treat_update_array_item">
+					<summary>Represente igk_treat_update_array_item function</summary>
+					<param name="q" ref="true" />
+					<param name="t" />
+					<param name="start" />
+					<param name="m" />
+			</member>
+			<member name="igk_treat_update_def">
+					<summary>Represente igk_treat_update_def function</summary>
+					<param name="m" />
+					<param name="type" />
+					<param name="r" />
+			</member>
+		</functions>
+	</members>
+</doc>
