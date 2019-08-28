@@ -4177,11 +4177,11 @@ function igk_treat_handle_html(& $t, $start, & $offset, $m, & $found=null){
 		$offset = 0;
 		
 	}
-	// igk_wln($offset);
-	// igk_wln($c); 
-	// igk_wln($ln);
-	// igk_wln("s:".$s);
-	// igk_wln("o:".$o);
+	// igk_treat_wln($offset);
+	// igk_treat_wln($c); 
+	// igk_treat_wln($ln);
+	// igk_treat_wln("s:".$s);
+	// igk_treat_wln("o:".$o);
 	// igk_wln_e("t:".$t);
 
 	igk_treat_restore_context($m->options);
