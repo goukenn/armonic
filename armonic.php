@@ -99,7 +99,7 @@ function igk_treat_bind_data($command=null){
     }
     $g=exec("php -l ".realpath($file)." 2> NUL", $c, $o);
     if($o != 0){
-        igk_wln_e($c);
+        igk_wln_e(__FILE__.":".__LINE__, $c);
     }
     $source=file_get_contents($file);
     $mp=igk_treat_source($source);
@@ -227,9 +227,9 @@ function igk_treat_create_options($options=null){
 ///<summary>Represente igk_treat_defaultheader function</summary>
 ///<param name="options"></param>
 function igk_treat_defaultheader($options){
-    static $defaultHeader=null;
     $mark=$options->mark;
     if($defaultHeader === null){
+    static $defaultHeader=null;
         $defaultHeader="";
         $hfile=igk_getv($options->command, "descriptionHeaderFile");
         if(!$hfile){
@@ -256,10 +256,10 @@ function igk_treat_defaultheader($options){
 ///<param name="start" ref="true"></param>
 ///<param name="offset" ref="true"></param>
 function igk_treat_end_array($m, & $t, & $start, & $offset){
-    static $maxArray=null;
     if($maxArray == null)
         $maxArray=igk_gettsv($m->options, "command/maxArrayLength", $m->options->arrayMaxLength);
     else{
+    static $maxArray=null;
         $maxArray=$m->options->arrayMaxLength;
     }
     $m->options->arrayDepth--;
@@ -363,6 +363,9 @@ function igk_treat_filecommand($command){
     }
     if(igk_treat_ogetv($command, "noDefineHandle")){
         $options->noDefineHandle=1;
+    }
+    if(igk_treat_ogetv($command, "noFileDesc")){
+        $options->noFileDesc=1;
     }
     if(igk_treat_ogetv($command, "genxmldoc")){
         $options->endDefinitionListener[]=function($def, $command){
@@ -490,7 +493,8 @@ function igk_treat_filecommand($command){
             $options->endDefinitionListener[]=$v;
         }
     }
-    $mp=igk_treat_source($source, function($out, $option){
+    $mp=igk_treat_source($source, null, null, $options);
+    $base=function($out, $option){
         if(!empty($option->data)){
             igk_wln("cDepth: ".$option->conditionDepth);
             igk_wln("bDepth: ".$option->bracketDepth);
@@ -618,8 +622,16 @@ function igk_treat_filecommand($command){
                         }
                     }
                 }
-                else
-                    $def=igk_treat_outdef($option->definitions, $option);
+                else{
+                    if(!empty((array)$option->definitions)){
+                        $def=igk_treat_outdef($option->definitions, $option);
+                    }
+                    else{
+                        if($option->command){
+                            $def=igk_treat_getfileheader($option, basename($option->command->inputFile));
+                        }
+                    }
+                }
                 $regx="/^\<\\?(php)?(\\s*|$)/";
                 $s="";
                 $lf=(empty($option->LF) ? $option->LF: IGK_LF);
@@ -644,13 +656,12 @@ function igk_treat_filecommand($command){
         }
         return $out;
     }
-    , null, $options);
+    ;
     if(igk_getv($command, "verbose", 0) == 1){
         if(strlen($mp) < 250000){
             igk_wln("output:\n".$mp);
         }
     }
-    if(igk_getv($command, "singleFilePerClass") == 1){}
     $c=$command->outFile;
     if(isset($c)){
         igk_io_w2file($c, $mp);
@@ -1027,12 +1038,7 @@ function igk_treat_handle_modifier($options){
     }
     return 0;
 }
-///<summary>Represente igk_treat_handle_operator_flag function</summary>
-///<param name="m"></param>
-///<param name="type"></param>
-///<param name="t"></param>
-///<param name="start"></param>
-///<param name="offset" default="null" ref="true"></param>
+///MODEL : PHP Model scripting
 function igk_treat_handle_operator_flag($m, $type, $t, $start, & $offset=null){
     if($opFlag=$m->options->operatorFlag){
         if(!(($type == "function") && preg_match("/(=|=\>|,|\?\?|:)/", $opFlag)) || (preg_match("/(::|-\>)/", $opFlag))){
@@ -1085,8 +1091,8 @@ function igk_treat_init_array_reading($m, $start, & $t, & $cancel=0){
 ///<summary>Represente igk_treat_lang_res function</summary>
 ///<param name="n"></param>
 function igk_treat_lang_res($n){
-    static $res=null;
     if($res == null){
+    static $res=null;
         $res["represent"]="Represente";
     }
     return igk_getv($res, $n, $n);
@@ -1137,7 +1143,6 @@ function igk_treat_lib($autocheck=1, $verbose=1){
                 }
                 copy($v, $f);
             }
-            else{}
         }
         $count++;
     }
@@ -1147,8 +1152,8 @@ function igk_treat_lib($autocheck=1, $verbose=1){
 ///<summary>Represente igk_treat_modifier function</summary>
 ///<param name="m"></param>
 function igk_treat_modifier($m){
-    static $ModiL=null;
     if(empty(trim($m))){
+    static $ModiL=null;
         return "";
     }
     if($ModiL == null){
@@ -1221,12 +1226,12 @@ function igk_treat_ogetv($tab, $index, $default=null){
 }
 ///<summary>treat output: </summary>
 function igk_treat_outdef($def, $options, $nofiledesc=0){
-    static $tlist=null;
     $out="";
     $tdef=array($def);
     $indent_l=-1;
     $indent="";
     $indent_c=function($v) use (& $indent, & $indent_l, $options){
+    static $tlist=null;
         if(isset($v->indentLevel)){
             if($indent_l != $v->indentLevel){
                 $idx=max(0, $v->indentLevel);
@@ -1473,7 +1478,6 @@ function igk_treat_outdef($def, $options, $nofiledesc=0){
             }
         }
         $def_file=1;
-        ///TASK: treat use
         foreach($tlist as $k=>$v){
             $tab=igk_getv($def, $k);
             if(!$tab){
@@ -1721,11 +1725,7 @@ function igk_treat_source($source, $callback=null, $tab=null, & $options=null){
     if($callback == null){
         $callback=function($out, $option){
             if(!empty($option->data)){
-                igk_wln("cDepth: ".$option->conditionDepth);
-                igk_wln("bDepth: ".$option->bracketDepth);
-                igk_wln("oDepth: ".$option->openHook);
-                igk_wln("context:".$option->context);
-                igk_wln("context:".$option->context);
+                igk_wln("cDepth: ".$option->conditionDepth, "bDepth: ".$option->bracketDepth, "oDepth: ".$option->openHook, "context:".$option->context, "context:".$option->context);
                 if(is_object($option->toread))
                     igk_wln($option->toread->type.":".$option->toread->name."<|||>".$option->tag);
                 else if($option->toread){
@@ -1745,15 +1745,21 @@ function igk_treat_source($source, $callback=null, $tab=null, & $options=null){
                 $s="";
                 $lf=(empty($option->LF) ? $option->LF: IGK_LF);
                 $gdef=preg_match($regx, $out);
-                if(!$gdef)
+                $nodesc=igk_getv($option, 'noFileDesc');
+                if(!$gdef && !$nodesc)
                     $option->noFileDesc=1;
                 $def=igk_treat_outdef($option->definitions, $option);
+                $option->noFileDesc=$nodesc;
                 if($gdef){
                     $s="<?php";
                     $out=preg_replace($regx, "", $out);
                     $s .= $lf.$def.$out;
                 }
                 else{
+                    if(!$option->noFileDesc && $option->command){
+                        $g="<?php\n".igk_treat_getfileheader($option, basename($option->command->inputFile)). "?>\n";
+                        $out=$g.$out;
+                    }
                     $s .= $out.$lf.$def;
                 }
                 return $s;
@@ -1764,16 +1770,12 @@ function igk_treat_source($source, $callback=null, $tab=null, & $options=null){
     $tline=igk_count($source);
     $options->totalLines=$tline;
     $options->source=$source;
-    $options->{"@automatcher_flag"}
-    =array();
+    $options->{"@automatcher_flag"}=array();
     $flag=0;
     $autoreset_flag=& $options->{"@automatcher_flag"};
     while($sline < $tline){
         $t=$source[$sline];
         $sline++;
-        if(!($sline % 100)){
-            igk_wln("info ".$sline. " / ".$tline);
-        }
         if($options->IgnoreEmptyLine && (strlen(trim($t)) == 0)){
             continue;
         }
@@ -1859,9 +1861,9 @@ function igk_treat_source($source, $callback=null, $tab=null, & $options=null){
 }
 ///<summary>represent php treat expression</Summary>
 function igk_treat_source_expression($options=null){
-    static $defExpression=null;
     $tab=array();
     if($defExpression == null){
+    static $defExpression=null;
         $defExpression=1;
     }
     array_unshift($tab, (object)array(
@@ -2025,7 +2027,6 @@ function igk_treat_source_expression($options=null){
                             $m->options->DataLFFlag=1;
                             $h=1;
                         }
-                        else{}
                         $g=$g." ";
                         break;
                         case "=":
@@ -2033,9 +2034,10 @@ function igk_treat_source_expression($options=null){
                             $g=" ".$g." ";
                         }
                         if(($m->options->bracketVarFlag) || ((!$m->options->conditionDepth) && !empty(igk_treat_get($m->options)))){
-                            $m->options->DataLFFlag=1;
-                            if(!$m->options->conditionDepth && !$m->options->objectPointerFlag)
+                            if(!$m->options->conditionDepth && !$m->options->objectPointerFlag){
+                                $m->options->DataLFFlag=1;
                                 igk_treat_append($m->options, "", 1);
+                            }
                             $m->options->DataLFFlag=0;
                             $m->options->bracketVarFlag=0;
                         }
@@ -2048,6 +2050,7 @@ function igk_treat_source_expression($options=null){
                         }
                         $m->options->DataLFFlag=0;
                         $m->options->bracketDepth++;
+                        $m->options->objectPointerFlag=1;
                         break;
                         case "->":
                         $m->options->bracketVarFlag=0;
@@ -2827,11 +2830,9 @@ function igk_treat_source_expression($options=null){
                                 $gdt=$btab["data"][$i];
                                 $data=explode(",", str_replace(" ", "", $gdt));
                                 sort($data);
-                                $gobj->{$n}
-                                =$data;
+                                $gobj->{$n}=$data;
                                 $k=implode(", ", $data);
-                                $gobj->{"@".$n}
-                                =$k;
+                                $gobj->{"@".$n}=$k;
                                 if(!empty($imp)){
                                     $imp .= " ";
                                 }
@@ -2908,8 +2909,8 @@ function igk_treat_source_expression($options=null){
                                     $totreat->readingMode=$cmode;
                                     if(($ch == "{") && ($cmode == 4)){
                                         $op_lx=substr($t, 0, $start + 1);
-                                        $totreat->$def=igk_treat_get($m->options).$op_lx;
-                                        $totreat->offsetDefinition=strlen($totreat->$def);
+                                        $totreat->def=igk_treat_get($m->options).$op_lx;
+                                        $totreat->offsetDefinition=strlen($totreat->def);
                                     }
                                     else if($ch == "("){
                                         $totreat->readP=array();
@@ -3540,7 +3541,7 @@ function igk_treat_source_expression($options=null){
     unset($cf);
     array_unshift($tab, (object)array(
             'name'=>'fileDescription',
-            'pattern'=>'/\/\/\\s*(?P<name>([a-zA-Z ]+)):\\s*(?P<value>(.)+)$/',
+            'pattern'=>'/\/\/\\s*(?P<name>(@?[a-zA-Z ]+)):\\s*(?P<value>(.)+)$/',
             'mode'=>function($option){
                 return ($option->mode == 0) && ($option->bracketDepth<=0);
             },
@@ -3714,9 +3715,7 @@ define("IGK_BASE_DIR", dirname(__FILE__));
 define("IGK_TREAT_IDENTIFIER", "[_a-zA-Z][_a-zA-Z0-9]*");
 define("IGK_TREAT_NS_NAME", "((\\\\\\s*)?".IGK_TREAT_IDENTIFIER.")((\\s*\\\\\\s*)".IGK_TREAT_IDENTIFIER.")*");;;;
 igk_treat_reg_command("-local", function($v, $command, $c){
-    $command->{"exec"}
-    =function($command){
-        $command->inputFile=__FILE__;
+    $command->{"exec"}=function($command){$command->inputFile=__FILE__;
         $command->outFile=igk_io_dir(isset($command->outFile) ? $command->outFile: (isset($command->outDir) ? $command->outDir."/".basename(__FILE__): dirname(__FILE__)."/".basename(__FILE__).".out.php"));
         igk_treat_filecommand($command);
     };
@@ -3732,9 +3731,7 @@ igk_treat_reg_command("-f,--file", function($v, $command, $c){
         igk_debug_wln("input file : ".$v);
         if($command->{"exec"}
          == null){
-            $command->{"exec"}
-            =function($command){
-                $command->outFile=igk_io_dir(isset($command->outFile) ? $command->outFile: (isset($command->outDir) ? $command->outDir."/".basename($command->inputFile): dirname(__FILE__)."/".basename($command->inputFile).".out.php"));
+            $command->{"exec"}=function($command){$command->outFile=igk_io_dir(isset($command->outFile) ? $command->outFile: (isset($command->outDir) ? $command->outDir."/".basename($command->inputFile): dirname(__FILE__)."/".basename($command->inputFile).".out.php"));
                 igk_treat_filecommand($command);
             };
         }
@@ -3758,19 +3755,16 @@ igk_treat_reg_command("-of,--outFile", function($v, $command, $c){
     $command->waitForNextEntryFlag=1;
 }
 , "set output file. use with -local");
-if(defined("ARMONIC_TEST") && file_exists(ARMONIC_DATA_FILE)){
+if(defined("ARMONIC_TEST") && defined("ARMONIC_DATA_FILE") && file_exists(ARMONIC_DATA_FILE)){
     igk_treat_reg_command("-data", function($v, $command, $c){
-        $command->{"exec"}
-        =function($command){
-            igk_treat_bind_data($command);
+        $command->{"exec"}=function($command){igk_treat_bind_data($command);
         };
     }
     , "Test data.php file library");
 }
 if(file_exists('d:\wamp\www\igkdev\Lib\igk\igk_framework.php')){
     igk_treat_reg_command("-igklib", function($v, $command, $c){
-        $command->{"exec"}
-        =function($command){
+        $command->{"exec"}=function($command){
             if(!isset($command->outDir)){
                 $command->outDir="d:/temp/dist";
             };
@@ -3805,8 +3799,7 @@ igk_treat_reg_command("-d, --inputDir", function($v, $command, $c){
         if(!is_dir($v)){
             igk_wln_e("error", "Input directory ".$v." does not exists");
         }
-        $command->{"exec"}
-        =function($command){
+        $command->{"exec"}=function($command){
             if(!isset($command->outDir)){
                 igk_die("outDir not set");
             }
@@ -4007,6 +4000,10 @@ igk_treat_reg_command("--no-vargroup", function($v, $command, $c){
     $command->noVarGroup=1;
 }
 , "disable variable grouping");
+igk_treat_reg_command("--no-filedesc", function($v, $command, $c){
+    $command->noFileDesc=1;
+}
+, "disable file description");
 igk_treat_reg_command("--multi-linevar", function($v, $command, $c){
     $command->multilineVars=1;
 }
@@ -4023,16 +4020,6 @@ igk_treat_reg_command("--leave-comment", function($v, $command, $c){
     $command->leaveComment=1;
 }
 , "do not remove comment");
-igk_treat_reg_command("-utest", function($v, $command, $c){
-    igk_treat_check_command_handle($command);
-    $command->unitTest=1;
-    $command->{"exec"}
-    =function($command){
-        igk_wln("start unit testing");
-    };
-    $command->commandHandle=1;
-}
-, "start unit testing on local data");
 if(defined("IGK_TREAT_TESTING"))
     return 0;
 $tab=array_slice($_SERVER['argv'], 1);
@@ -4042,8 +4029,7 @@ if(count($tab) == 0){
 else{
     $command=igk_createobj();
     $command->command=$tab;
-    $command->{"exec"}
-    =null;
+    $command->{"exec"}=null;
     $command->storage=array();
     $command->waitForNextEntryFlag=false;
     $gcommand=igk_treat_command();

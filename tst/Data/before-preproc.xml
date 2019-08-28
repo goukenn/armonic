@@ -1,0 +1,12 @@
+<armonic>
+<test name="afterelse" >
+	<input><![CDATA[<div></div><?php
+echo writing data;]]>
+</input>
+		<output><![CDATA[<div></div>
+<?php
+echo writing data;
+]]>
+</output>
+</test>
+</armonic>
