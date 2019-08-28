@@ -105,15 +105,13 @@ array_unshift($tab, (object)array(
 		// );
 			if (!empty($before)){
 				igk_treat_append($m->options, $before, 0);
-
 			}
 			$t = substr($t, $start + strlen($m->data[0][0]));
 			$offset = 0;
 			// igk_wln("out:", $t);
 
             $m->options->context = "defineOperationContext";
-			if ($totreat->def[strlen($totreat->def)-1]=='('){
-               
+			if ($totreat->def[strlen($totreat->def)-1]=='('){               
                 $m->options->conditionDepth = 1;
 			}else{
 
