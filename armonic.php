@@ -227,9 +227,9 @@ function igk_treat_create_options($options=null){
 ///<summary>Represente igk_treat_defaultheader function</summary>
 ///<param name="options"></param>
 function igk_treat_defaultheader($options){
+    static $defaultHeader=null;
     $mark=$options->mark;
     if($defaultHeader === null){
-    static $defaultHeader=null;
         $defaultHeader="";
         $hfile=igk_getv($options->command, "descriptionHeaderFile");
         if(!$hfile){
@@ -256,10 +256,10 @@ function igk_treat_defaultheader($options){
 ///<param name="start" ref="true"></param>
 ///<param name="offset" ref="true"></param>
 function igk_treat_end_array($m, & $t, & $start, & $offset){
+    static $maxArray=null;
     if($maxArray == null)
         $maxArray=igk_gettsv($m->options, "command/maxArrayLength", $m->options->arrayMaxLength);
     else{
-    static $maxArray=null;
         $maxArray=$m->options->arrayMaxLength;
     }
     $m->options->arrayDepth--;
@@ -523,113 +523,12 @@ function igk_treat_filecommand($command){
             }
             if(igk_getv($option->command, "noTreat") != 1){
                 $def="";
-                if(igk_getv($option->command, "singleFilePerClass") == 1){
-                    ($outdir=igk_getv($option->command, "singleFileOutput")) || ($outdir=igk_getv($option->command, "outDir")) || ($outdir=dirname($option->command->outFile));
-                    if(!empty($outdir)){
-                        $tdef=(object)array();
-                        $globaloutput=array();
-                        foreach($option->definitions as $k=>$v){
-                            if($k == "lastTreat")
-                                continue;
-                            $NS_N="";
-                            $defp=array((object)array("ns"=>"", "d"=>$v));
-                            $gsrc="";
-                            while($q=array_pop($defp)){
-                                foreach($q->d as $def){
-                                    switch(strtolower($def->type)){
-                                        case "function":
-                                        if(empty($q->ns)){
-                                            $tdef->function[]=$def;
-                                        }
-                                        else{
-                                            $globaloutput[$q->ns]["func"][]=$def;
-                                        }
-                                        continue 2;
-                                        break;
-                                        case "namespace":{
-                                            if(isset($def->globalSrc) && !empty($gnssrc=$def->globalSrc)){
-                                                $nsdec="";
-                                                if(isset($def->def)){
-                                                    $nsdec .= $def->def.";".IGK_LF;
-                                                }
-                                                else
-                                                    $nsdec .= $def->src;
-                                                $globaloutput[$def->name]["nsdec"]=$nsdec;
-                                                $globaloutput[$def->name]["gsrc"][]=$gnssrc;
-                                                unset($nsdec, $ngssrc);
-                                            }
-                                            foreach($def->definitions as $nt=>$mf){
-                                                if($nt == "use"){
-                                                    foreach($mf as $rr){
-                                                        $gsrc .= $rr->src. IGK_LF;
-                                                    }
-                                                    continue;
-                                                }
-                                                array_push($defp, (object)array("ns"=>$def->name, "d"=>$mf, "p"=>$def, "src"=>& $gsrc));
-                                            }
-                                            continue 2;
-                                        }
-                                        break;
-                                        case "use":
-                                        if(empty($q->ns)){
-                                            $tdef->use[]=$def;
-                                        }
-                                        continue 2;
-                                        break;default: 
-                                        break;
-                                    }
-                                    $src=$gsrc.$def->src;
-                                    $nsdef="";
-                                    if(!empty($ns=$q->ns)){
-                                        $ns .= "/";
-                                        if(isset($q->p->def)){
-                                            $nsdef .= $q->p->def."{".IGK_LF.$src."}";
-                                        }
-                                        else
-                                            $nsdef .= $q->p->src.$src;
-                                    }
-                                    else{
-                                        $nsdef=$src;
-                                    }
-                                    $f=$outdir."/".$ns.$def->name.".".strtolower($def->type).".php";
-                                    igk_io_w2file($f, "<?php\n".igk_treat_getfileheader($option, $f).$nsdef);
-                                }
-                            }
-                        }
-                        if(count($globaloutput) > 0){
-                            $indent=str_repeat($option->IndentChar, 1);
-                            foreach($globaloutput as $kk=>$tt){
-                                $_tout="";
-                                $_tout .= $tt["nsdec"].IGK_LF;
-                                if(isset($tt["func"]) && ($funcs=$tt["func"])){
-                                    usort($funcs, function($a, $b){
-                                        return strcmp($a->name, $b->name);
-                                    });
-                                    foreach($funcs as $_gfc){
-                                        $_tout .= $_gfc->src;
-                                    }
-                                }
-                                foreach($tt["gsrc"] as $_t){
-                                    $_tout .= $_t;
-                                }
-                                $_tout=preg_replace("#^".$indent."#im", "", $_tout);
-                                $f=$outdir."/".$kk."/_global.ns.php";
-                                igk_io_w2file($f, "<?php\n".igk_treat_getfileheader($option, $f).$_tout);
-                            }
-                        }
-                        else{
-                            $def=igk_treat_outdef($tdef, $option);
-                        }
-                    }
+                if(!empty((array)$option->definitions)){
+                    $def=igk_treat_outdef($option->definitions, $option);
                 }
                 else{
-                    if(!empty((array)$option->definitions)){
-                        $def=igk_treat_outdef($option->definitions, $option);
-                    }
-                    else{
-                        if($option->command){
-                            $def=igk_treat_getfileheader($option, basename($option->command->inputFile));
-                        }
+                    if($option->command){
+                        $def=igk_treat_getfileheader($option, basename($option->command->inputFile));
                     }
                 }
                 $regx="/^\<\\?(php)?(\\s*|$)/";
@@ -1038,7 +937,12 @@ function igk_treat_handle_modifier($options){
     }
     return 0;
 }
-///MODEL : PHP Model scripting
+///<summary>Represente igk_treat_handle_operator_flag function</summary>
+///<param name="m"></param>
+///<param name="type"></param>
+///<param name="t"></param>
+///<param name="start"></param>
+///<param name="offset" default="null" ref="true"></param>
 function igk_treat_handle_operator_flag($m, $type, $t, $start, & $offset=null){
     if($opFlag=$m->options->operatorFlag){
         if(!(($type == "function") && preg_match("/(=|=\>|,|\?\?|:)/", $opFlag)) || (preg_match("/(::|-\>)/", $opFlag))){
@@ -1091,8 +995,8 @@ function igk_treat_init_array_reading($m, $start, & $t, & $cancel=0){
 ///<summary>Represente igk_treat_lang_res function</summary>
 ///<param name="n"></param>
 function igk_treat_lang_res($n){
-    if($res == null){
     static $res=null;
+    if($res == null){
         $res["represent"]="Represente";
     }
     return igk_getv($res, $n, $n);
@@ -1152,8 +1056,8 @@ function igk_treat_lib($autocheck=1, $verbose=1){
 ///<summary>Represente igk_treat_modifier function</summary>
 ///<param name="m"></param>
 function igk_treat_modifier($m){
-    if(empty(trim($m))){
     static $ModiL=null;
+    if(empty(trim($m))){
         return "";
     }
     if($ModiL == null){
@@ -1226,12 +1130,12 @@ function igk_treat_ogetv($tab, $index, $default=null){
 }
 ///<summary>treat output: </summary>
 function igk_treat_outdef($def, $options, $nofiledesc=0){
+    static $tlist=null;
     $out="";
     $tdef=array($def);
     $indent_l=-1;
     $indent="";
     $indent_c=function($v) use (& $indent, & $indent_l, $options){
-    static $tlist=null;
         if(isset($v->indentLevel)){
             if($indent_l != $v->indentLevel){
                 $idx=max(0, $v->indentLevel);
@@ -1741,28 +1645,129 @@ function igk_treat_source($source, $callback=null, $tab=null, & $options=null){
                 igk_wln_e("some: error: data is not empty:". $option->data);
             }
             else{
-                $regx="/^\<\\?(php)?(\\s*|$)/";
-                $s="";
-                $lf=(empty($option->LF) ? $option->LF: IGK_LF);
-                $gdef=preg_match($regx, $out);
-                $nodesc=igk_getv($option, 'noFileDesc');
-                if(!$gdef && !$nodesc)
-                    $option->noFileDesc=1;
-                $def=igk_treat_outdef($option->definitions, $option);
-                $option->noFileDesc=$nodesc;
-                if($gdef){
-                    $s="<?php";
-                    $out=preg_replace($regx, "", $out);
-                    $s .= $lf.$def.$out;
+                if(igk_getv($option->command, "singleFilePerClass") == 1){
+                    ($outdir=igk_getv($option->command, "singleFileOutput")) || ($outdir=igk_getv($option->command, "outDir")) || ($outdir=dirname($option->command->outFile));
+                    if(!empty($outdir)){
+                        $tdef=(object)array();
+                        $globaloutput=array();
+                        foreach($option->definitions as $k=>$v){
+                            if($k == "lastTreat")
+                                continue;
+                            $NS_N="";
+                            $defp=array((object)array("ns"=>"", "d"=>$v));
+                            $gsrc="";
+                            while($q=array_pop($defp)){
+                                foreach($q->d as $def){
+                                    switch(strtolower($def->type)){
+                                        case "function":
+                                        if(empty($q->ns)){
+                                            $tdef->function[]=$def;
+                                        }
+                                        else{
+                                            $globaloutput[$q->ns]["func"][]=$def;
+                                        }
+                                        continue 2;
+                                        break;
+                                        case "namespace":{
+                                            if(isset($def->globalSrc) && !empty($gnssrc=$def->globalSrc)){
+                                                $nsdec="";
+                                                if(isset($def->def)){
+                                                    $nsdec .= $def->def.";".IGK_LF;
+                                                }
+                                                else
+                                                    $nsdec .= $def->src;
+                                                $globaloutput[$def->name]["nsdec"]=$nsdec;
+                                                $globaloutput[$def->name]["gsrc"][]=$gnssrc;
+                                                unset($nsdec, $ngssrc);
+                                            }
+                                            foreach($def->definitions as $nt=>$mf){
+                                                if($nt == "use"){
+                                                    foreach($mf as $rr){
+                                                        $gsrc .= $rr->src. IGK_LF;
+                                                    }
+                                                    continue;
+                                                }
+                                                array_push($defp, (object)array("ns"=>$def->name, "d"=>$mf, "p"=>$def, "src"=>& $gsrc));
+                                            }
+                                            continue 2;
+                                        }
+                                        break;
+                                        case "use":
+                                        if(empty($q->ns)){
+                                            $tdef->use[]=$def;
+                                        }
+                                        continue 2;
+                                        break;default: 
+                                        break;
+                                    }
+                                    $src=$gsrc.$def->src;
+                                    $nsdef="";
+                                    if(!empty($ns=$q->ns)){
+                                        $ns .= "/";
+                                        if(isset($q->p->def)){
+                                            $nsdef .= $q->p->def."{".IGK_LF.$src."}";
+                                        }
+                                        else
+                                            $nsdef .= $q->p->src.$src;
+                                    }
+                                    else{
+                                        $nsdef=$src;
+                                    }
+                                    $f=$outdir."/".$ns.$def->name.".php";
+                                    igk_io_w2file($f, "<?php\n".igk_treat_getfileheader($option, $f).$nsdef);
+                                }
+                            }
+                        }
+                        if(count($globaloutput) > 0){
+                            $indent=str_repeat($option->IndentChar, 1);
+                            foreach($globaloutput as $kk=>$tt){
+                                $_tout="";
+                                $_tout .= $tt["nsdec"].IGK_LF;
+                                if(isset($tt["func"]) && ($funcs=$tt["func"])){
+                                    usort($funcs, function($a, $b){
+                                        return strcmp($a->name, $b->name);
+                                    });
+                                    foreach($funcs as $_gfc){
+                                        $_tout .= $_gfc->src;
+                                    }
+                                }
+                                foreach($tt["gsrc"] as $_t){
+                                    $_tout .= $_t;
+                                }
+                                $_tout=preg_replace("#^".$indent."#im", "", $_tout);
+                                $f=$outdir."/".$kk."/_global.ns.php";
+                                igk_io_w2file($f, "<?php\n".igk_treat_getfileheader($option, $f).$_tout);
+                            }
+                        }
+                        else{
+                            $def=igk_treat_outdef($tdef, $option);
+                        }
+                    }
                 }
                 else{
-                    if(!$option->noFileDesc && $option->command){
-                        $g="<?php\n".igk_treat_getfileheader($option, basename($option->command->inputFile)). "?>\n";
-                        $out=$g.$out;
+                    $regx="/^\<\\?(php)?(\\s*|$)/";
+                    $s="";
+                    $lf=(empty($option->LF) ? $option->LF: IGK_LF);
+                    $gdef=preg_match($regx, $out);
+                    $nodesc=igk_getv($option, 'noFileDesc');
+                    if(!$gdef && !$nodesc)
+                        $option->noFileDesc=1;
+                    $def=igk_treat_outdef($option->definitions, $option);
+                    $option->noFileDesc=$nodesc;
+                    if($gdef){
+                        $s="<?php";
+                        $out=preg_replace($regx, "", $out);
+                        $s .= $lf.$def.$out;
                     }
-                    $s .= $out.$lf.$def;
+                    else{
+                        if(!$option->noFileDesc && $option->command){
+                            $g="<?php\n".igk_treat_getfileheader($option, basename($option->command->inputFile)). "?>\n";
+                            $out=$g.$out;
+                        }
+                        $s .= $out.$lf.$def;
+                    }
+                    return $s;
                 }
-                return $s;
             }
             return $out;
         };
@@ -1861,9 +1866,9 @@ function igk_treat_source($source, $callback=null, $tab=null, & $options=null){
 }
 ///<summary>represent php treat expression</Summary>
 function igk_treat_source_expression($options=null){
+    static $defExpression=null;
     $tab=array();
     if($defExpression == null){
-    static $defExpression=null;
         $defExpression=1;
     }
     array_unshift($tab, (object)array(
@@ -2960,15 +2965,16 @@ function igk_treat_source_expression($options=null){
                     $skip=0;
                     switch($totreat->type){
                         case 'function':
-                        if(isset($totreat->isanonymous) && ($totreat->isanonymous == 1)){
-                            if(count($_fcdef=$totreat->definitions) > 0){
-                                $sc=rtrim(igk_treat_outdef($_fcdef, $options, 1));
-                                if(!empty($sc) && ($_offset=$totreat->offsetDefinition)){
-                                    $src=substr($src, 0, $_offset).IGK_LF.$sc. substr($src, $_offset);
-                                }
-                                unset($sc, $_offset);
+                        if(count($_fcdef=$totreat->definitions) > 0){
+                            $sc=rtrim(igk_treat_outdef($_fcdef, $options, 1));
+                            if(!empty($sc) && ($_offset=$totreat->offsetDefinition)){
+                                $src=substr($src, 0, $_offset).IGK_LF.$sc. substr($src, $_offset);
                             }
-                            unset($_fcdef);
+                            unset($sc, $_offset);
+                            $totreat->definitions=null;
+                        }
+                unset($_fcdef);
+                if(isset($totreat->isanonymous) && ($totreat->isanonymous == 1)){
                             $src=preg_replace("/function\\s+\(/", "function(", $src);
                             igk_treat_append($options, trim($src), 0);
                             if($options->conditionDepth<=0){
@@ -2978,7 +2984,6 @@ function igk_treat_source_expression($options=null){
                             $options->DataLFFlag=1;
                             return;
                         }
-                ///TASK: Name formatted to lower case
                 if($totreat->parent){
                             $skip=($options->bracketDepth-1) > 0;
                         }
@@ -2986,7 +2991,7 @@ function igk_treat_source_expression($options=null){
                             $skip=$options->bracketDepth > 0;
                         }
                 if($options->arrayDepth > 0){
-                            igk_wln("failed :::: ", "depth:".$options->arrayDepth, $options->lineNumber, $src);
+                            igk_ewln("failed :::: ", "depth:".$options->arrayDepth, $options->lineNumber, $src);
                         }
                 break;
                 case "namespace":
@@ -3018,16 +3023,7 @@ function igk_treat_source_expression($options=null){
                     }
             if(($totreat->type != "use") && igk_count($totreat->definitions) > 0){
                         $out=igk_treat_outdef($totreat->definitions, $options, 1);
-                        if($totreat->type == "function"){
-                            if(($pos=strpos(rtrim($src), "{", strlen($totreat->def))) === false){
-                                igk_wln_e("not start bracket found ".$src);
-                            }
-                            $gs=substr($src, 0, $pos + 1);
-                            $out=rtrim($out);
-                            if(!empty($out))
-                                $src=$gs.$options->LF.$out. substr($src, $pos + 1);
-                        }
-                else{
+                        if($totreat->type != "function"){
                             if(($pos=strpos(rtrim($src), "}", -1)) === false){
                                 igk_wln_e("not end bracket found ".$src);
                             }
@@ -3465,7 +3461,7 @@ function igk_treat_source_expression($options=null){
             }
         ));
     array_unshift($tab, (object)array(
-            'name'=>'htmlContextHandle',
+            'name'=>'phpEndProcessorHandle',
             'pattern'=>'/(\\s*|^)\?\>/',
             'mode'=>'*',
             'callback'=>function($t, $start, & $offset, & $m){
@@ -3513,13 +3509,12 @@ function igk_treat_source_expression($options=null){
                     $offset=strlen($t);
                 }
                 igk_treat_restore_context($m->options);
-                $m->options->DataLFFlag=0;
                 if(!empty($before)){
+                    $m->options->DataLFFlag=0;
                     igk_treat_append($m->options, $before, 0);
                 }
-                $m->options->DataLFFlag=0;
                 $endproc="?>";
-                if($m->options->bracketVarFlag){
+                if($m->options->bracketVarFlag || $m->options->DataLFFlag){
                     $m->options->DataLFFlag=1;
                     $m->options->bracketVarFlag=0;
                 }

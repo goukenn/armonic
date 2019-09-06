@@ -7,9 +7,7 @@ class DataTest extends AbstractArmonicTesting{
     }
     public function testallData()
     {
-
-        igk_trace();
-        igk_wln_e("");
+ 
         foreach( igk_io_getfiles(dirname(__FILE__)."/Data", "/\.xml$/") as $k=>$v){
             $data = igk_conf_load_file($v, "armonic");
             if (isset($data->test->disable) && $data->test->disable){

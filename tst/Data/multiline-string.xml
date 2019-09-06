@@ -1,0 +1,15 @@
+<armonic>
+<test name="variable">
+    <input><![CDATA[<?php
+$DATA = <<<EOF
+Information du jour
+EOF;
+?>]]></input>
+<output><![CDATA[<?php
+$DATA=<<<EOF
+Information du jour
+EOF;
+?>]]>
+</output>
+</test>
+</armonic>

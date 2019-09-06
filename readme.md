@@ -1,2 +1,2 @@
-'ARMONC'
-Balafon CLI Php file formatter
+#ARMONC
+'Balafon CLI Php file formatter'
