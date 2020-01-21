@@ -13,7 +13,6 @@
             <testsuite name="all">
                 <directory>./</directory>
             </testsuite>
-
     </testsuites>
 
 </phpunit>
