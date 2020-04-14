@@ -3,7 +3,7 @@ defined("IGK_FRAMEWORK") || die("REQUIRE FRAMEWORK - No direct access allowed");
 
 array_unshift($tab, (object)array(
 		'name'=>'definedReadExpression',
-		'pattern'=>"#(^|\\s+)(?P<operator>defined)(\\s*\()?#i",
+		'pattern'=>"#(^|\\s+)(?P<operator>(\!\\s*)defined)(\\s*\()?#i",
 		'mode'=>function($m){
 			// igk_wln("check","mode:".$m->mode , "output:", $m->totreat,
 			// "check::::: ".(($m->mode == 0) && ($m->totreat ==0)),
