@@ -1,4 +1,5 @@
-/balafondeploy
+/bck
 **/.vscode
 /test
 .gitignore
+bck/armonic.bat

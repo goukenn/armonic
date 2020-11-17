@@ -1,0 +1,920 @@
+<?php
+// author: C.A.D. BONDJE DOUE
+
+$pad1="8px";
+$pad2="10px";
+$pad22="20px";
+$pad3="16px";
+$pad4="20px;";
+$pad_title="4px";
+$ctrl_cnf_index=0x1A0;
+$ctrl_options_zindex=$ctrl_cnf_index + 50;
+$ctrl_session_zindex=$ctrl_cnf_index + 100;
+$ctrl_rear_zindex=-100;
+$ctrl_frame_zindex=500;
+$btn_sizes=[16, 24, 32, 48, 64, 96];
+foreach($btn_sizes as $k=>$v){
+    $def[".igk-btn-s-".($k + 1)
+    ]="width:{$v}px; height:{$v}px";
+}
+unset($btn_sizes);
+$screen_resolutions=array("xsm", "sm", "lg", "xlg", "xxlg");
+$ts=array(3, 4, 5, 8, 9, 12);
+$mt=array("left", "top", "bottom", "right");
+$state=igk_css_type_styles();
+$i_state=array("invalid");
+$margin=array("2", "4", "8", "16", "32", "48");
+$def["body div"]="";
+$prop["paddingSize"]=$pad2;
+$ctn_lg=$theme->get_media(IGKHtmlDocThemeMediaType::CTN_LG_MEDIA);
+$ctn_xlg=$theme->get_media(IGKHtmlDocThemeMediaType::CTN_XLG_MEDIA);
+$ctn_xxlg=$theme->get_media(IGKHtmlDocThemeMediaType::CTN_XXLG_MEDIA);
+$ctn_lg [".igk-container"]="width:".IGK_CSS_CTN_LG_SIZE."px";
+$ctn_xlg [".igk-container"]="width:".IGK_CSS_CTN_XLG_SIZE."px";
+$ctn_xxlg [".igk-container"]="width:".IGK_CSS_CTN_XXLG_SIZE."px";
+$paddings_level=array(10, 16, 24, 32, 48);
+foreach($paddings_level as $k=>$v){
+    $l=$k + 1;
+    $def[".igk-padding-w-{$l}"]="padding: 0px {$v}px;";
+    $def[".igk-padding-h-{$l}"]="padding: {$v}px 0px;";
+}
+$def[".igk-comment"]="[sysfcl:igk-comment-fcl] font-style:italic;";
+$p="";
+foreach($ts as $l){
+    for($i=1; $i<=$l; $i++){
+        if(!empty($p))
+            $p .= ", ";
+        $n=".igk-col-$l-$i";
+        $p .= $n;
+        $def[$n]="width:".(100 * ($i/$l))."%;";
+    }
+}
+$def[$p]="float:left;";
+$def[".igk-col.igk-pull-right"]="float:right !important;";
+$p="";
+foreach($screen_resolutions as $k){
+    foreach($ts as $l){
+        for($i=1; $i<=$l; $i++){
+            if(!empty($p))
+                $p .= ", ";
+            $p .= ".igk-col-$k-$l-$i";
+        }
+    }
+}
+$def[$p]="padding:0px 10px;";
+$ctb=array();
+foreach($screen_resolutions as $scr){
+    $xn=$scr."_screen";
+    $pn="";
+    if(!isset($ctb[$scr])){
+        $ctb[$scr]=(object)array("n"=>"");
+    }
+    $$xn[".igk-".$scr.
+    "-fitw"]="width:100% !important;";
+    $$xn[".igk-".$scr.
+    "-alignc"]="text-align:center !important;";
+    $$xn[".igk-".$scr.
+    "-dispn"]="display: none !important;";
+    $def[".igk-".$scr.
+    "-show"]="display:none;";
+    $$xn[".igk-".$scr.
+    "-show"]="display: inherit !important;";
+    foreach($ts as $s){
+        for($i=1; $i<=$s; $i++){
+            $is="$s-$i";
+            $ctb[$scr]->n=".igk-col-".$scr."-{$is}";
+            if($i > 1){
+                $pn .= ",";
+            }
+            $pn .= $ctb[$scr]->n;
+            $v_dim=(100 * ($i/$s));
+            $$xn[$ctb[$scr]->n ]="width:".$v_dim."%;";
+            $$xn[".igk-col-".$scr.
+            "-offset-$s-$i"]="margin-left: ".$v_dim."%;";
+        }
+    }
+    $$xn[$pn ]="{sys:floatl}";
+}
+$cl["textColor"]="#333";
+$def["body.igk-body"]="background-color:[syscl:backgroundColor]; color:[syscl:textColor]";
+$def["body.igk-body.xboxone"]="padding:0px !important; background-color:#222";
+$def["body.igk-body.xboxone .igk-powered"]="{sys:dispn}";
+$def[".igk-lh-0"]="line-height:0 !important;";
+$def["ul.igk-puce"]="padding-left:32px;";
+$def["ul.igk-puce > li"]="list-style-type: disc;";
+$def[".igk-device:before"]="content:'screen'";
+$def[".igk-fs-m"]="font-size:8pt;";
+$def[".igk-fs-n"]="font-size:10pt;";
+$def[".igk-fs-l"]="font-size:18.5pt;";
+$def[".igk-padding-a-2"]="padding:{$pad2}";
+$def[".igk-darkbg-40:before"]="content:' '; position:absolute; {sys:fit} background-color:#000; opacity:0.4;";
+$def[".igk-def-c"]="(sys:igk-fs-n) line-height:1.25;";
+$def[".igk-body"]="(sys:igk-def-c) overflow:hidden;";
+$def[".igk-body ol, .igk-body ul"]="padding:0px; margin:0px;";
+$def[".igk-page"]="";
+$def[".igk-body-box"]="{sys:fit, overflow-y-a}";
+$def[".igk-cleartab"]="clear:both; content:' '; display:table;";
+$def[".igk-tip"]="clear:both; content:' '; display:table; cursor:help;";
+$def[".igk-new-lang-key"]="cursor:help; [trans: color 0.2s ease-in-out]";
+$def[".igk-anchor-all"]="left:0px !important; top:0px !important;  bottom:0px !important; right:0px;";
+$def[".igk-community-link"]="overflow:hidden";
+$def[".igk-community-box"]="width:32px; height:32px";
+$def[".igk-toggle-button"]="line-height:1; margin-top:{$pad1}; margin-bottom:{$pad1}; margin-right:16px; padding-top: {$pad1}; padding-bottom:{$pad1}; min-width:42px; padding-left:4px; padding-right:4px; vertical-align: middle; border:1px solid [syscl:igk-iconbar-bcl]; ";
+$def[".igk-toggle-button:hover"]="[sysbgcl:igk-iconbar-hover-bg]";
+$def[".igk-toggle-button .igk-iconbar"]="border:2px solid [syscl:igk-iconbar-bcl]; {sys:dispb}";
+$def[".igk-toggle-button .igk-iconbar:not(:first-child)"]="margin-top:4px;";
+$def[".igk-debugger"]="background-color:#eee; color:#444;";
+$def[".igk-action-ctn"]="padding-top:4px;";
+$def[".igk-zfront"]="z-index : {$ctrl_frame_zindex}; ";
+$def[".igk-trans-all"]="[trans: all 0.5s ease-in-out]";
+$def[".igk-trans-all-200ms"]="[trans: all 0.2s ease-in-out]";
+$def[".trans-w"]="[trans: width 0.2s]";
+$def[".trans-h"]="[trans: height 0.2s]";
+$def["*.igk-transparent-bg"]="background-color:transparent !important;";
+$def[".igk-context-menu"]="{sys:posfix} display:none; min-height:3em; background-color:#e5e5e5; padding:0px; overflow:hidden; z-index:200;";
+$def[".igk-context-menu.igk-show"]="display:block !important;";
+$def[".igk-context-menu:before"]="content:' '; position:absolute; background-color:red; {sys:loc_l,loc_t} width:32px; height:100%";
+$def[".igk-context-menu > li"]="{sys:dispb,posr} padding-left: 36px; padding-right:10px;";
+$def[".igk-context-menu > li a"]="{sys:dispb}padding-top:4px; padding-bottom:4px;";
+$def[".igk-context-menu > li a:hover"]="{sys:no-decoration}";
+$def[".igk-context-menu .igk-context-menu-sep"]="height: 1em;";
+$def[".igk-context-menu > li.igk-checked:before"]="position:absolute;  background-color:black; {sys:loc_l,loc_t} width:32px; height:32px; content:' ';";
+$def[".igk-transition-easeinout"]="[trans: all 0.2s ease-in-out]";
+$def[".igk-lg-only"]="display:none !important;";
+$def[".igk-xlg-only"]="display:none !important;";
+$def[".igk-col"]="padding-left:{$pad2}; padding-right:{$pad2};";
+$def[".igk-row > .igk-col"]=
+$def["div > .igk-col"]="float:left; margin-top:10px; margin-bottom:10px;";
+$def[".igk-row > .igk-col:not(:last-child)"]="";
+$def[".igk-row .igk-col .igk-row"]="margin:0px -10px;";
+$def[".igk-form .igk-row"]="margin-top:auto !important;";
+$def[".igk-white-border"]="{sys:bdr-1}; border-color:white";
+$def[".igk-black-border"]="{sys:bdr-1}";
+for($i=0; $i < 5; $i++){
+    $t=4 * (1 << $i);
+    $def[".igk-pad-".$t.
+    ""]="padding:".$t."px;";
+}
+for($i=2; $i < 6; $i++){
+    $def[".fitw-".
+    $i]="width:".(100/$i)."%;";
+}
+$def[".igk-fsl-1"]="font-size:1.1em";
+$def[".igk-fsl-2"]="font-size:1.9em";
+$def[".igk-fsl-2"]="font-size:2.1em";
+$def[".igk-fsl-4"]="font-size:2.8em";
+$xsm_screen[".igk-fsl-xsm-1"]="";
+$sm_screen[".igk-fsl-sm-1"]="";
+$lg_screen[".igk-fsl-lg-1"]="font-size: 8em;";
+$lg_screen[".igk-fsl-lg-2"]="font-size: 5em;";
+$lg_screen[".igk-fsl-lg-3"]="font-size: 2.4em;";
+$lg_screen[".igk-fsl-lg-4"]="font-size: 1.7em;";
+$lg_screen[".igk-fsl-lg-5"]="font-size: 0.82em;";
+$lg_screen[".igk-fsl-lg-6"]="font-size: 0.78em;";
+$xlg_screen[".igk-fsl-xlg-1"]="";
+$xxlg_screen[".igk-fsl-xxlgm-1"]="";
+$def[".igk-collapse"]="display:none;";
+$def["igk-js-msbox"]=" {sys:fit, igk-parentscroll, igk-powered-viewer, overflow-y-a}";
+$def[".igk-js-notify"]="max-height:400px; overflow:auto";
+$def[".igk-js-notify-box .igk-js-notify"]="max-height:400px; overflow:scroll;";
+$def[".igk-js-notify .content-z"]="{sys:margin-a-lr}";
+$def["textarea.no-resize"]=" resize:none;";
+$def[".igk-body .err-403 .presentation a"]="color:#cecece;";
+$def[".igk-body .err-403 .presentation"]="background-color:#454545;";
+$def[".igk-menu-i"]="{sys:posr}";
+$def[".igk-connect-form"]="margin-left:auto; margin-right:auto; max-width: 400px;";
+$def[".igk-col-view-box"]="padding:10px; background-color: #fff; box-shadow: 0px 0px 2px #aaa; border:1px solid #ddd;";
+$def[".igk-signup-form"]="margin-left:auto; margin-right:auto; max-width: 400px;";
+$def[".igk-table-container"]=
+$def[".igk-tablehost"]="overflow-x:auto";
+$def[".igk-submenu"]="{sys:dispn}";
+$def[".igk-submenu.igk-show"]="display:block !important;";
+$def[".igk-slider-btn"]="cursor:pointer;";
+$def[".igk-dialog-temp"]="{sys:dispn}";
+$def[".igk-hpageview"]="{sys:no-wrap, no-overflow} ";
+$def[".igk-hpageview > div"]="{sys:posr, dispib, fith, fitw, alignt} white-space:normal !important;";
+$def[".igk-wi .igk-hpageview > div"]="padding:2em; ";
+$def[".igk-slider .igk-slider-z"]="overflow:hidden; white-space: nowrap !important;min-height:150px;";
+$def[".igk-slider .igk-btn-slider"]="{sys:posab, bdr-1} width:32px; height:32px;  z-index:10";
+$def[".igk-slider .igk-btn-slider.igk-pull-left"]="{sys:loc_l} top:50%; margin:auto; margin-top:-16px;";
+$def[".igk-slider .igk-btn-slider.igk-pull-right"]="{sys:loc_r} top:50%; margin:auto; margin-top:-16px;";
+$def[".igk-slider .igk-slider-page"]="{sys:fitw, dispib, alignt} ";
+$def[".igk-slider.vertical .igk-slider-z"]="white-space: normal !important; height:150px;";
+$def[".igk-slider.vertical .igk-slider-page"]="{sys:fitw, fith, dispb}";
+$def[".igk-slider.vertical .igk-btn-slider.igk-pull-left"]="{sys:loc_t}  left:50%; margin:auto; margin-right:-16px;";
+$def[".igk-slider.vertical .igk-btn-slider.igk-pull-right"]="{sys:loc_b} right:auto; top:auto; left:50%; margin:auto; margin-right:-16px;";
+$def["div.ctn"]="padding-top:64px; padding-bottom:64px";
+$def["div.ctn:before"]="content:' '; display:block; {sys:fit, posab, loc_t} ; opacity:0.35; background-color:#44598C;";
+$def[".igk-vscrollb"]="";
+$def[".igk-vscrollb:hover"]="background-color: #ddd;";
+$def[".igk-vscrollb > .igk-vscrollb-cur"]="";
+$def[".igk-debug-info"]="";
+$def[".igk-js-hide"]="display:none;";
+$def[".igk-vscroll"]="{sys:loc_t, loc_r,posab, loc_b} z-index:20; width:4px; height:100%; [trans:opacity, 0.2s ease-in-out] opacity:0.0; ";
+$def[".igk-vscroll:before"]="content:' '; opacity:0.1; background-color:black; {sys:posab,loc_a}";
+$def[".igk-vscroll.igk-show"]="opacity:1.0; ";
+$def[".igk-vscroll:hover"]="[sysbgcl:igk-vscroll-h-bg]";
+$def[".igk-vscroll > .igk-scroll-cur"]="{sys:posab, fitw, loc_t } background-color: [cl:scrollBgColor, #444]; cursor:pointer";
+$def[".igk-hscroll"]="{sys:loc_l, loc_r,posab, loc_b,fitw} z-index:20; height:4px; [trans:opacity, 0.2s ease-in-out] opacity:0.0; ";
+$def[".igk-hscroll:before"]="content:' '; opacity:0.1; background-color:black; {sys:posab,loc_a}";
+$def[".igk-hscroll.igk-show"]="opacity:1.0; ";
+$def[".igk-hscroll:hover"]="[sysbgcl:igk-vscroll-h-bg]";
+$def[".igk-hscroll > .igk-scroll-cur"]="{sys:posab, fith, loc_t } [sysbgcl:scrollCurBackground] min-width:32px; cursor:pointer";
+igk_css_regcolor("igk-scroll-cur-bg", "#FF6961");
+igk_css_regcolor("igk-vscroll-h-bg", "#ddd;");
+$def[".igk-line-waiter"]="height:8px; [sysbgcl:igk-line-waiter-bg]; padding-top:4px; padding-bottom:4px; background-color:transparent;";
+$def[".igk-line-waiter .igk-line-waiter-cur"]="{sys:posab,dispb,loc_t,loc_b}  [trans: 4.0s ease-in-out] [trans-prop: margin-right, right] left: auto;right: 100%; padding-right:4px; background-color:indigo; margin:2px;  margin-right:-6px; ";
+$def[".igk-line-waiter .igk-line-waiter-cur.igk-animate"]=" right:0%; margin-right:0px;";
+$def[".igk-anim-time-board"]="{sys:dispb,posab} visibility:hidden; z-index:-9999";
+$def[".igk-circle-waiter .igk-anim-time-board"]="width:0px; height:0px; color:aqua; ". igk_getv(array(
+        "[trans:all 0.85s linear]",
+        "[trans:color 0.25s linear, width 0.55s ease-out, height 0.25s ease-in]"
+    ), 1);
+$def[".igk-circle-waiter .igk-anim-time-board:before"]="content:'{stop:\"width\", mode:2}';";
+$def[".igk-circle-waiter .igk-anim-time-board.igk-cl-1"]="color:indigo";
+$def[".igk-circle-waiter .igk-anim-time-board.igk-cl-2"]="color:aqua";
+$def[".igk-circle-waiter"]="{sys:no-overflow} width:48px; height:48px";
+$def[".igk-navbar li"]="display:inline-block;";
+$def[".igk-navbar.igk-top-nav-bar"]="{sys:loc_t, loc_l, posfix,fitw, dispn} [trans: opacity 0.4s, height 0.6s] z-index:1000";
+$def[".igk-navbar.igk-top-nav-bar.igk-show"]="opacity:1; display:block !important; width:auto;";
+$def[".igk-snippet"]="{sys:posab} top:0px; left:0px; border-radius:10% 10%; ";
+$def[".igk-snippet:hover"]="cursor:pointer; [sysbgcl:igk-snippet-hover-bg]";
+$def[".igk-snippet.pull-left"]="top:50%; left:0px;";
+$def[".igk-snippet.pull-right"]="top:50%; left:auto; right:0px;";
+$def[".igk-snippet.pull-top"]="top:0%;left:50%;";
+$def[".igk-snippet.pull-bottom"]="top:auto; bottom:0px; left:50%;";
+igk_css_regcolor("igk-snippet-hover-bg", "#FBB");
+igk_css_regcolor("igk-scroll-bg", "#ddd");
+$def[".igk-card-id .story-line .bdr"]="[sysfcl:igk-card-id-bdr-fcl] height:8px";
+$def[".igk-card-id .story-line .bg"]="[sysbgcl:igk-card-id-bdr-bg]";
+$def[".igk-card-id canvas"]="{sys:posab,loc_t,loc_l,fitw,fith}";
+igk_css_regcolor("igk-card-id-bdr-fcl", "#444");
+igk_css_regcolor("igk-comment-fcl", "#00AF07");
+igk_css_regcolor("igk-card-id-bdr-bg", "#dedede");
+$def[".igk-accordeon .igk-trans-all"]="[trans: all 0.2s ]";
+$def[".igk-accordeon .igk-panel-heading"]="cursor:default";
+$def[".igk-accordeon .igk-panel-heading a"]="{sys:dispb} padding-top:{$pad2}; padding-bottom:{$pad2};";
+$def[".igk-accordeon .igk-c.igk-collapse"]="overflow:hidden; display:block !important;";
+$def[".igk-accordeon .igk-c"]="height:0px;";
+$def[".igk-symbol"]="{sys:fit}";
+$def[".igk-lborder"]="height:4px; {sys:posab,loc_t, loc_l, loc_r} [sysbgcl:igk-lborder-bg]";
+$def[".igk-lborder:hover"]="";
+$def[".igk-lborder.pull-bottom"]="{sys:loc_b} top:auto;";
+$def[".igk-lborder.pull-left"]="height:auto; width:4px; {sys:loc_t, loc_b} right:auto;";
+$def[".igk-lborder.pull-right"]="height:auto; width:4px; {sys:loc_t, loc_b} left:auto;";
+igk_css_regcolor("igk-lborder-bg", "#50D39A");
+$def[".igk-bullet"]="width:32px; height:32px; background-repeat:no-repeat;";
+$def[".igk-bullet.igk-active"]="background-position:-32px 0px;";
+$theme->reg_keyFrames($def, "igk-progress-frame", " from {background-position: 0px 0; } to { background-position: 40px 0; }");
+$def[".igk-progressbar"]="{sys:dispib, alignc}; background-color:indigo; height:16px; min-width: 300px;";
+$def[".igk-progressbar:after"]="display:inline-block; width: 0%; content: ' '; height:100%; background-color:[cl:progressBarCur, red];";
+$def[".igk-progressbar-cur"]="height:16px; {sys:dispb} [sysbgcl:progressCursorBackground]";
+$def[".igk-progressbar-cur.igk-pull-top"]="{sys:dispb, fitw}";
+$def[".igk-progressbar.igk-anim .igk-progressbar-cur"]="[anim:igk-progress-frame 1.5s linear infinite]";
+$def[".igk-progressbar.igk-stripped"]="";
+$def[".igk-progressbar.igk-stripped .igk-progressbar-cur"]="background-size:40px 40px; background-image: linear-gradient(45deg, [cl:igk-progressbar-cur-bg, lime] 25%,transparent 25%, transparent 50%, red 50%, red 75%, transparent 75%, transparent);";
+for($i=0; $i<=10; $i++){
+    $def[".igk-progress-". ($i)
+    ]="width: ".($i * 10)."%;";
+    $def[".igk-progress-". ($i).
+    ".igk-pull-top"]="height: ".($i * 10)."%;";
+}
+igk_css_regcolor("igk-progressbar-bg", "#00CBFF");
+igk_css_regcolor("igk-progressbar-cur-bg", "#ada");
+$def[".igk-shapes"]="{sys:no-border,no-repeat}";
+$def[".igk-shapes.trapeze"]="width:16px;height:16px; background-color:yellow;";
+$def[".igk-shapes.trapeze:before"]="background-color:#458845;";
+$def[".igk-shapes.trapeze .style"]="{sys:dispn}";
+$def[".igk-shapes.trapeze .style"]="{sys:dispn} background-color:blue; color:white;";
+$def[".igk-shapes.rectangle"]="";
+$def[".igk-shapes.ellipse"]="";
+$def[".igk-shapes.arc"]="";
+$def[".igk-shapes.pie"]="";
+$def[".igk-shapes.polygon"]="";
+$titleFontLevel=['4em', '3.1em', '2.9em', '2.2em', '1.9em'];
+for($i=0; $i < count($titleFontLevel); $i++){
+    $def[".igk-title-".($i + 1)
+    ]="font-size: ".$titleFontLevel[$i]."; ";
+}
+$def[".igk-title"]="font-size: 1.333em; padding:{$pad_title};";
+$def[".igk-header"]="[sysbgcl:igk-header-bgcl] [sysfcl:igk-header-fcl] padding:{$pad1};";
+$def[".igk-horizontal-menu"]="padding:0px;";
+$def[".igk-horizontal-menu li"]="{sys:dispib}";
+$def[".igk-horizontal-menu li a"]="{sys:dispb, nodecoration}";
+$def[".igk-horizontal-menu li:not(:first-child)"]="margin-left:{$pad1};";
+$def[".igk-horizontal-menu .igk-selected-menuitem"]="border-bottom : 2px solid red; ";
+$def[".igk-pagination"]="{sys:dispi} margin-left:auto; margin-right:auto; min-width: 200px;";
+$def[".igk-pagination:after"]="display:table; content:' '; clear:both;";
+$def[".igk-pagination li"]="{sys:floatl} border: 1px solid #ddd;";
+$def[".igk-pagination > li"]="padding:6px 12px;[sysbgcl:igk-pagination-bg]";
+$def[".igk-pagination li a"]="text-decoration:none;";
+$def[".igk-pagination > li.igk-active"]="[sysbgcl:igk-pagination-active-bg]";
+$def[".igk-pagination > li.igk-inactive"]="cursor: not-allowed;";
+$def[".igk-hmenu"]="";
+$def[".igk-hmenu.floatr, igk-hmenu-floatl"]="z-index:20";
+$def[".igk-hmenu.igk-btn"]="margin:auto; padding:8px;";
+$def[".igk-hmenu a"]="color:#D7D7D7; [trans:0.5s color]";
+$def[".igk-hmenu a:hover"]="color:#65FF00;";
+$def[".igk-hmenu li"]="[trans: 0.2s background-color]";
+$def[".igk-hmenu > li a"]="padding:8px;";
+$def[".igk-hmenu > li > ul"]="[trans:0.5s all] {sys:posab} display:none;  width:auto; min-width:150px; z-index:50; [sysbgcl:submenu-bg] [sysfcl:submenu-fcl] padding:0px;";
+$def[".igk-hmenu > li > ul > li"]="padding:0px;";
+$def[".igk-hmenu > li > ul li a"]="{sys:dispb} padding: 8px;";
+$def[".igk-hmenu > li > ul li a:hover"]="[sysbgcl:submenu-hightlight-bg] [sysfcl:submenu-hightlight-fcl]";
+$def[".igk-hmenu > li"]="{sys:dispib}";
+$def[".igk-hmenu > li:hover"]="background-color: [syscl:horizontalMenuHoverBackground]; ";
+$def[".igk-hmenu > li > ul li"]="display:block";
+$def[".igk-hmenu > li  ul.igk-show"]="opacity:1; display:block;";
+$def[".igk-hmenu > li > ul li:hover"]="[sysbgcl:igk-hmenu-si-bg]";
+$def[".igk-hmenu.igk-pull-right"]="{sys:alignr}";
+$def[".igk-hmenu.igk-pull-right:after"]="content:' '; display:table; clear:both;";
+igk_css_regcolor("submenu-bg", "#444");
+igk_css_regcolor("submenu-fcl", "#444");
+igk_css_regcolor("submenu-hightlight-fcl", "#77d");
+igk_css_regcolor("submenu-hightlight-bg", "#aaa");
+$def[".igk-canva-editor"]="width:400px; height:300px;";
+$def[".igk-canva-editor canvas"]="{sys:fitw, fith, bdr-1} border-color:red; ";
+$def[".igk-view-box"]="padding-top:32px; padding-bottom:32px;";
+$def[".igk-breadcrumbs"]="margin-bottom:16px; padding:8px 16px;";
+$def[".igk-breadcrumbs:after"]="display:table; content:' '; clear:both;";
+$def[".igk-breadcrumbs > li"]="float:left;";
+$def[".igk-breadcrumbs > li.igk-active"]="[sysbgcl:igk-breadcrumbs-active-bg] [sysfcl:igk-breadcrumbs-active-fcl]";
+$def[".igk-breadcrumbs > li.igk-inactive"]="[sysbgcl:igk-breadcrumbs-inactive-bg] [sysfcl:igk-breadcrumbs-inactive-fcl]";
+$def[".igk-breadcrumbs > li:not(:last-child):after"]="{sys:floatr} content:'/'; padding:0px 8px;";
+$def[".igk-rm-margin"]="margin-right:-10px;margin-left:-10px;";
+$def[".igk-add-margin"]="margin-right:10px;margin-left:10px;";
+$def["a > svg"]=
+$def["a.igk-svg-host"]="line-height:0;";
+$def["a.svg-a"]="{sys:dispib} width:32px; height:32px; [trans: all 0.2s ease-in-out]";
+$def["a.svg-a svg"]="fill:#000";
+$def["a.svg-a:hover"]="background-color:#000;";
+$def["a.svg-a:hover svg"]="fill:#fff";
+$def[".igk-action-bar"]="background-color:var(--igk-cl-actionBarBackground); padding: 10px 0px; line-height:1";
+$def[".igk-action-bar:after"]="clear:both;content:' '; display:table;";
+$def[".igk-action-bar.igk-pull-right > igk-btn, .igk-action-bar.igk-pull-right > input[type=button],.igk-action-bar.igk-pull-right > input[type=submit],.igk-action-bar.igk-pull-right > input[type=reset]"]="float:right;";
+$def[".igk-action-bar.igk-pull-right > input[type=button]:not(:first-child),.igk-action-bar.igk-pull-right > input[type=submit]:not(:first-child),.igk-action-bar.igk-pull-right > input[type=reset]:not(:first-child)"]="margin-right:8px;";
+$def[".igk-action-bar > .igk-btn:not(.igk-pull-right)"]="float:left;";
+$def[".igk-menu-bar"]="min-height:16px;[sysbgcl:igk-menu-bar-bg] [sysfcl:igk-menu-bar-fcl]; padding-top:4px; padding-bottom:4px;";
+$def[".igk-trb"]="position:relative; background-color:#DEAEEE; cursor:pointer; padding:4px;";
+$def[".igk-trb > .igk-trb-cur"]="width:0px; min-height:8px; height:100%; [sysbgcl:igk-trb-cur-bg]";
+$def[".igk-trb.igk-dir-up > .igk-trb-cur, .igk-trb.igk-dir-down > .igk-trb-cur"]="height:auto;min-height:auto;width:100%; background-color:red;";
+igk_css_regcolor("igk-trb-cur-bg", "#44FF44");
+$def[".igk-action-bar.igk-pull-right > .igk-separator"]="display:block; float:right;width:1px; margin-left:40px; height:1px; border-right:1px solid transparent; ";
+$def[".igk-action-bar.igk-pull-right > .igk-separator:after"]="content:' '; display:table; clear:both;";
+$def[".igk-action-bar > div.igk-pull-right"]="{sys:floatr}";
+$def[".igk-action-bar:not(.igk-pull-right) > igk-btn"]=
+$def[".igk-action-bar:not(.igk-pull-right) > input[type=button]"]=
+$def[".igk-action-bar:not(.igk-pull-right) > input[type=submit]"]=
+$def[".igk-action-bar:not(.igk-pull-right) > input[type=reset]"]="float:left;";
+$def[".igk-action-bar:not(.igk-pull-right) > igk-btn"]=
+$def[".igk-action-bar:not(.igk-pull-right) > input[type=button]:not(:first-child)"]=
+$def[".igk-action-bar:not(.igk-pull-right) > input[type=submit]:not(:first-child)"]=
+$def[".igk-action-bar:not(.igk-pull-right) > input[type=reset]:not(:first-child)"]="margin-left:8px;";
+$def[".igk-action-bar .igk-btn.igk-pull-right"]="float:right !important";
+$def[".igk-fixed-action-bar"]="{sys:posfix, loc_l, loc_r} [trans:transform 0.2s ease-in-out] [transform:translateY(-100%)] z-index:30;";
+$def[".igk-fixed-action-bar.igk-show"]="[transform:translateY(0%)]";
+$def[".igk-roll-owner"]=
+$def[".igk-touch-roll-owner"]="overflow:hidden;";
+$def[".igk-touch-roll-owner:after"]=
+$def[".igk-roll-owner:after"]="display:table; content:' '; clear:both;";
+$def[".igk-roll-in"]="[trans:all 0.2s ease-in-out] [transform:translate(-100%)] {sys:dispib, posab, fith, loc_l, loc_t} z-index:10;{sys:no-wrap} overflow:hidden";
+$def[".igk-roll-in-hover"]="[transform:translate(0px)]";
+$def[".igk-roll-in.igk-pull-right"]="{sys:loc_t}";
+$def[".igk-touch-roll-owner.igk-pull-right > .igk-roll-in, .igk-roll-owner.igk-pull-right > .igk-roll-in, .igk-roll-owner > .igk-roll-in.igk-pull-right"]="left:100%; [transform:translate(0%)]  ";
+$def[".igk-touch-roll-owner.igk-pull-right > .igk-roll-in-hover, .igk-roll-owner.igk-pull-right > .igk-roll-in-hover ,.igk-roll-owner > .igk-roll-in-hover.igk-pull-right"]
+="[transform:translate(-100%)]";
+$def[".igk-touch-roll-owner.igk-pull-bottom > .igk-roll-in, .igk-roll-owner.igk-pull-bottom > .igk-roll-in, .igk-roll-owner > .igk-roll-in.igk-pull-bottom"]="top:100%; [transform:translateY(0%)]  ";
+$def[".igk-touch-roll-owner.igk-pull-bottom > .igk-roll-in-hover, .igk-roll-owner.igk-pull-bottom > .igk-roll-in-hover,.igk-roll-owner > .igk-roll-in-hover.igk-pull-bottom"]="[transform:translateY(-100%)]";
+$def[".igk-touch-roll-owner.igk-pull-top > .igk-roll-in, .igk-roll-owner.igk-pull-top > .igk-roll-in, .igk-roll-owner > .igk-roll-in.igk-pull-top"]="top:0px; [transform:translateY(-100%)]";
+$def[".igk-touch-roll-owner.igk-pull-top > .igk-roll-in-hover, .igk-roll-owner.igk-pull-top > .igk-roll-in-hover,.igk-roll-owner > .igk-roll-in-hover.igk-pull-top"]="[transform:translateY(0%)]";
+$def[".igk-touch-roll-owner.igk-roll-owner"]="background-color:indigo;";
+$def[".igk-parentscroll"]="";
+$def[".igk-btn-download"]="[sysbgcl:igk-btn-download-bg] [sysfcl:igk-btn-download-fcl]";
+$def["a.igk-btn-download:hover, a.igk-btn-download:active,a.igk-btn-download:focus"]="[sysbgcl:igk-btn-default-bg] [sysfcl:igk-btn-default-fcl]";
+$def["a.igk-btn"]="{sys:no-decoration}";
+$def["a.igk-btn.igk-svg-btn"]="{sys:dispib, no-padding, no-margin}";
+$def[".igk-notifybox"]="width:auto; margin:auto; padding:{$pad1}; margin-bottom:4px;";
+$def[".igk-notify"]="width:auto; margin:auto; padding:{$pad2};";
+$def[".igk-notify-background"]="";
+$def[".igk-notify-background:before"]="content:' '; display:block; {sys:posab, fit, loc_t loc_l} [sysbgcl:igk-notify-bg] [trans:opacity 0.5s] opacity: 0.0";
+$def[".igk-notify-background.igk-show:before"]="opacity: 0.4;";
+$def[".igk-notify:last-child"]="margin-bottom:4px;";
+$def[".igk-notify-danger, .igk-notifybox-danger, .igk-table > tbody > .igk-notify-danger > td, .igk-table > tbody > .igk-notify-danger > th"]="[sysbgcl:igk-danger-bg] [sysfcl:igk-danger-fcl]";
+$def[".igk-js-notify"]="{sys:dispb,posfix,loc_l,loc_r} background-color: #ddd; color:#777; padding-bottom:{$pad2};";
+$def[".igk-js-notify .igk-panel"]="color: #777";
+$def[".igk-js-notify .igk-notify-btn-close"]="display:block; color:white; margin:8px 16px; cursor:pointer;";
+$def[".igk-js-notify.igk-danger .igk-panel"]="color: #777";
+$def[".igk-notify-z"]="min-height:2.1em";
+$def["code.igk-code span.ln"]="color:#cecece; vertical-align:bottom; margin-right:10px";
+$def["code.igk-code span.ln"]="{sys:posr} color: [cl:codeLineForeColor, #cecece]; z-index:10; padding-right:10px; [resolv:user-select: none;] display:table-cell !important;";
+$def["code.igk-code span.ln:before"]="{sys:posab, loc_l} background-color: [cl:codeLineBgColor, #444]; z-index: -1; right:4px; top:-4px; bottom:-4px; margin-left:-12px; content:' ';";
+$def["code.igk-code > div"]="{sys:disptabr}";
+$def["code.igk-code:before"]="{sys:posab, loc_a} background-color: [cl:codeViewBgColor, #eee]; content:' '; z-index:-1; ";
+$def["code.igk-code"]="line-height: 1.4em; {sys:posr, fitw} max-width:100%;";
+$def[".igk-table"]="border-collapse: collapse; border-spacing:0px; border:none; padding:0px;";
+$def[".igk-table > tbody  th"]="{sys:no-wrap};";
+$def[".igk-table.th-left > tbody  th"]="{sys:alignl};";
+$def[".igk-table.th-right > tbody  th"]="{sys:alignr};";
+$def[".igk-table > tbody > tr.alignl th"]="text-align:left;";
+$def[".igk-table > tbody > tr:first-child > td, .igk-table > tbody > tr:first-child > th"]="padding:8px;";
+$def[".igk-table > tbody > tr:not(:first-child) > td, .igk-table > tbody > tr:not(:first-child) > th"]
+="border-top: 1px solid [syscl:igk-table-cell-border];";
+$def[".igk-table tr td"]="padding:{$pad1};";
+$def[".igk-table > thead td, .igk-table > thead th"]="border:0;";
+$def[".igk-table-hover > tbody > tr:hover"]
+="";
+$def[".igk-table .igk-form-control"]="min-width: 150px;";
+$def[".igk-table.igk-table-striped > tbody > tr:nth-child(odd) > td, .igk-table-striped > tbody > tr:nth-child(odd) > th"]="[sysbgcl:igk-table-row-odd-bgcl] [sysfcl:igk-table-row-odd-fcl] ";
+$def[".igk-table.igk-table-striped > tbody > tr:hover > td"]="background-color:transparent !important; color:inherit;";
+$def[".igk-table.igk-table-striped > tbody > tr:nth-child(odd) > th"]="";
+$def[".igk-table.igk-table-striped > tbody > tr:hover"]="[sysbgcl:stripTableHoverBackground];";
+$def[".igk-table.igk-table-striped > tbody > tr:hover:nth-child(odd)"]="[sysfcl:stripTableHoverRowEvenColor]";
+$def[".igk-table.igk-table-striped > tbody > tr:hover:nth-child(even)"]="[sysfcl:stripTableHoverRowOddColor]";
+$def[".igk-dashed-border-1"]="border:1px dashed [syscl:igk-dashed-border-bcl];";
+$def[".igk-dashed-border-2"]="border:2px dashed [syscl:igk-dashed-border-bcl];";
+$def[".igk-dashed-border-4"]="border:4px dashed [syscl:igk-dashed-border-bcl];";
+$def[".igk-dashed-border-8"]="border:8px dashed [syscl:igk-dashed-border-bcl];";
+$def[".igk-tabcontrol"]="{sys:dispb} padding-top:8px;";
+$def[".igk-tabcontrol > .igk-tab-h > ul > li > a"]="cursor:pointer;";
+$def[".igk-tabcontrol ul"]="margin:0px;";
+$def[".igk-tabcontrol > div:first-child > ul > li"]="{sys:dispib} padding:4px;";
+$def[".igk-tabcontrol > div:first-child > ul > li.igk-active"]="font-weight:300; font-size:1.2em; [sysbgcl:igk-tabcontrol-a-bg] [sysfcl:igk-tabcontrol-c-a-fcl]";
+$def[".igk-tabcontrol .igk-tabcontent"]="[sysbgcl:igk-tabcontrol-c-bg] padding:10px; margin-left:-10px; margin-right:-10px; overflow:hidden !important;";
+igk_css_regcolor("igk-tabcontrol-a-bg", "#eaeff2");
+igk_css_regcolor("igk-tabcontrol-c-bg", "#eaeff2");
+$def[".igk-glyph-home"]="font-size:1.4em";
+$def[".igk-gohome-btn"]="opacity: 0.0 !important; position:fixed; right:32px; bottom:32px; overflow:hidden; width:48px; height:48px; z-index:50;";
+$def[".igk-gohome-btn.igk-show"]="opacity:1.0 !important;";
+$m=array(4, 8, 10, 16);
+for($i=0; $i < igk_count($m); $i++){
+    $v_ss=$m[$i];
+    for($j=0; $j < igk_count($mt); $j++){
+        $k=$mt[$j];
+        $def[".igk-pad-".$k[0]."-".
+        $v_ss]="padding-{$k}: ".$v_ss."px;";
+        $def[".igk-mar-".$k[0]."-".
+        $v_ss]="margin-{$k}: ".$v_ss."px;";
+    }
+}
+$def[".igk-number-list"]="padding-left: 32px;";
+$def[".igk-number-list li"]="list-style: number;";
+foreach($margin as $t=>$v){
+    $def[".igk-mb-".
+    $v]="margin-bottom:".$v."px;";
+    $def[".igk-mt-".
+    $v]="margin-top:".$v."px;";
+    $def[".igk-ml-".
+    $v]="margin-left:".$v."px;";
+    $def[".igk-mr-".
+    $v]="margin-right:".$v."px;";
+}
+$def[".igk-smaller"]="font-size:0.8em;";
+$def[".igk-xsmaller"]="font-size:0.4em;";
+$def[".igk-bigger"]="font-size:1.2em;";
+$def[".igk-xbigger"]="font-size:1.6em;";
+$def[".igk-txt-u"]="text-transform: uppercase !important;";
+$def[".igk-txt-l"]="text-transform: lowercase !important;";
+$def[".igk-txt-c"]="text-transform: capitalize !important;";
+$def[".igk-expo"]="font-size:0.6em; text-align:center; vertical-align:top; display:inline-block;";
+$def[".igk-indice"]="font-size:0.6em; text-align:center; vertical-align:bottom; display:inline-block;";
+$def[".igk-list-item"]="margin-bottom:4px;display:block;background-color:#eee;overflow:hidden;";
+$def[".igk-panel"]="{sys:dispb} [sysfcl:igk-panel-fcl] [sysbgcl:igk-panel-bcl] margin:auto; padding: {$pad1};";
+$def[".igk-btn"]=
+$def[".igk-btn-lnk"]=
+$def[".clsubmit"]=
+$def[".clbutton"]="display:inline-block; margin:auto; padding: {$pad1}; border:none; cursor:pointer;";
+$def[".igk-btn.igk-active"]="border-left: solid 4px #FFBF00; color: #683500";
+$def[".igk-btn-connect, input.igk-btn-connect, .igk-btn-connect a"]="[sysbgcl:igk-btn-connect-bg] [sysfcl:igk-btn-connect-fcl]";
+$def[".igk-form-control, .cltext, .clpassword, .clemail, .clnumber, .clsearch, .cltel, .clselect"]="{sys:fitw,dispib} padding:{$pad1}; margin:0px;[trans: 0.1s color ease-in] [sysfcl:igk-input-cl]";
+$def[".igk-form-control.cltext:focus, .igk-form-control.clpassword:focus, .igk-form-control.clemail:focus"]="color:#222;";
+$def[".igk-form-box"]="{sys:dispb} max-width: 355px; margin-left:auto; margin-right:auto; padding:32px; background-color: #F7F7F7;";
+$def[".igk-body .framebox"]="(:.google-Roboto)";
+$def[".igk-body .framebox li"]="padding-bottom:8px";
+$def[".igk-body .framebox li > label"]="float:left; width: 50%;";
+$def[".igk-body .framebox li > input,.igk-body .framebox li > .clselect"]="float:left; width: 50%;";
+$def[".igk-body .framebox li:after"]="display:table; content:' '; clear:both;";
+$def[".igk-body .framebox:before"]="{sys:posfix, fitw, fith, loc_t, loc_l} opacity:0.4; content:' '; background-color:black;";
+foreach($state as $k){
+    $def[".igk-".
+    $k]="[sysbgcl:igk-".$k."-bg] [sysfcl:igk-".$k."-fcl]";
+    $def[".igk-text-".
+    $k]="[sysbgcl:igk-text-".$k."-bg] [sysfcl:igk-text-".$k."-fcl]";
+    $def[".igk-text-".$k.
+    ":hover"]="[sysbgcl:igk-text-hover-".$k."-bg] [sysfcl:igk-text-hover-".$k."-fcl]";
+    $def[".igk-panel-".
+    $k]="[sysbgcl:igk-panel-".$k."-bg] [sysfcl:igk-panel-".$k."-fcl]";
+    $def[".igk-btn-".
+    $k]="[sysbgcl:igk-btn-".$k."-bg] [sysfcl:igk-btn-".$k."-fcl]";
+    $def[".igk-".
+    $k]="[sysbgcl:igk-".$k."-bg] [sysfcl:igk-".$k."-fcl]";
+    $def[".igk-btn-".$k.
+    ":hover"]="[sysbgcl:igk-btn-".$k."-hover-bg] [sysfcl:igk-btn-".$k."-hover-fcl]";
+    $def[".igk-".$k.
+    ":hover"]="[sysbgcl:igk-".$k."-hover-bg] [sysfcl:igk-".$k."-hover-fcl]";
+    $def[".igk-notify-".
+    $k]="[sysbgcl:igk-notify-".$k."-bg] [sysfcl:igk-notify-".$k."-fcl] padding: {$pad1};";
+    $c=ucfirst($k);
+    $def[".igk-btn.igk-".
+    $k]="color:[syscl:button{$c}Color]; background-color: [syscl:button{$c}Background];";
+}
+foreach($i_state as $k){
+    $def[".igk-".
+    $k]="";
+}
+$def[".cltext.igk-invalid"]="background-color:#C71A24; color:white;";
+$def[".igk-page-zone:before, .igk-page-zone:after"]="display:table;content:' ';";
+$def[".igk-page-zone"]="min-height:1px; padding-left:15px; padding-right:15px; margin-left:auto; margin-right:auto;";
+$def[".igk-container"]="[trans:width 0.9s ease-in-out]  margin-left:auto; margin-right:auto;";
+$def[".igk-container:after, .igk-float-container:after"]="display:table;clear:both;content:' '";
+$def[".igk-padd"]="padding-left:10px; padding-right:10px;";
+$def[".igk-row-container"]="padding-left:{$pad2}; padding-right:{$pad2}; ";
+$def[".igk-row-container:after"]="display:table;content:' '; clear:both;";
+$def[".igk-bodybox .igk-form-control::-moz-placeholder "]=
+$def[".igk-bodybox .igk-form-control:-moz-placeholder "]=
+$def[".igk-bodybox .igk-form-control::-webkit-input-placeholder "]="[sysfcl:inputPlaceHolderColor] font-style:italic";
+$def[".igk-bodybox .igk-form-control::-moz-placeholder:hover "]=
+$def[".igk-bodybox .igk-form-control:-moz-placeholder:hover "]=
+$def[".igk-bodybox .igk-form-control::-webkit-input-placeholder:hover "]="[sysfcl:inputPlaceHolderHoverColor]";
+$sm_screen[".igk-page-zone"]="margin-left:0; margin-right:0;";
+$sm_screen[".igk-fitw-sm"]="width : 100%;";
+$lg_screen[".igk-sm-only"]=
+$xlg_screen[".igk-sm-only"]=
+$xxlg_screen[".igk-sm-only"]="display:none !important;";
+$m=$lg_screen;
+$v_pr="";
+for($i=1; $i<=4; $i++){
+    $p=".igk-fitw-lg-4-$i";
+    $m[$p]="width : ". (100 * ($i/4))."%;";
+    if($i > 1)
+        $v_pr .= ",";
+    $v_pr .= $p;
+}
+$m[".igk-lg-only"]="display:block !important;";
+$m[".igk-xlg-only"]="display:block !important;";
+$m[".igk-xlg-dispn"]="display:none;";
+$def[".igk-php"]="font-family: consolas, courier new; color:#555; min-width:600px; min-height:200px; display:inline-block;";
+$def[".igk-cleara:after"]="clear:both; content:' '; display:table;";
+$def[".igk-row"]="padding:0px; margin-left: -10px; margin-right:-10px;";
+$def[".igk-row-cell"]="float:left;";
+$def["igk-container .igk-row:not(:first-child)"]="margin-top: {$pad22};";
+$def[".igk-row:after"]="{sys:clearb}";
+$def[".igk-row:after, .igk-row:before"]="content:' '; display:table;";
+$def[".igk-row .igk-col-span"]="{sys:posab, loc_t, loc_r, loc_b}";
+$m=$sm_screen;
+$pn="";
+foreach($ts as $s){
+    for($i=1; $i<=$s; $i++){
+        $n=".igk-col-sm-$s-$i";
+        if($i > 1)
+            $pn .= ",";
+        $pn .= $n;
+        $m[$n]="width:".(100 * ($i/$s))."%;";
+    }
+}
+$m[$pn]="float:left; overflow:hidden; ";
+$m[".igk-sm-list-item"]=$def[".igk-list-item"];
+$m[".igk-sm-fitw"]="display:block !important;width:100%;";
+$m[".igk-horizontal-menu li:not(:first-child)"]="margin-left:auto";
+$def[".igk-canva-gkds-obj"]="color:blue;";
+$def[".igk-canva-gkds-obj:hover"]="color:red;";
+$def[".igk-canva-bg"]="{sys:posab,fitw,fith,loc_t,loc_l}";
+$def[".igk-winui-parallax"]="background-repeat: no-repeat; background-size:100% auto; [trans:0.5s background-position ease-out]";
+for($i=0; $i < 11; $i++){
+    $def[".igk-winui-parallax.igk-pos-{$i}"]="background-position : center ".($i * 10)."%;";
+}
+$def[".igk-balafon-ref"]="";
+$def[".igk-balafon-ref .igk-jsa"]="color:#29DCC5";
+$def[".igk-ctrl-options"]="z-index:${ctrl_options_zindex}; ";
+$def[".igk-ctrl-options:hover"]="opacity:1.0;";
+$def[".igk-mail"]="[sysbgcl:igk-mail-bg] [sysfcl:igk-mail-fcl]";
+$def[".igk-mail .igk-menu-bar"]="clear:both;";
+$def[".igk-mail a"]="{sys:no-decoration}";
+$def[".igk-mail .igk-btn"]="color:#888; background-color:#78ecff;";
+$def[".igk-mail .sign"]="border-top:1px solid #8d8; padding-top:10px;font-size:0.72em; background-color:#f1f1f1;";
+$def[".igk-ms-dialog"]="{sys: posfix} display:none; [sysbgcl:igk-ms-dialog-bg][sysfcl:igk-ms-dialog-fcl]; left:0px; top:50%; width:100%; z-index:400;";
+$def[".igk-ms-dialog:before"]="content:' '; opacity:0.4; display:block; position:fixed; background-color:black; {sys:fitw, fith, loc_t, loc_l, loc_r, loc_b}";
+$def[".igk-ms-dialog.igk-show"]="display:block;";
+$def[".igk-ms-dialog .igk-btn-close"]="{sys:posab, loc_r, loc_t,no-repeat} height:32px; width:48px; display:block; cursor:pointer; z-index:401; padding:0px; margin:0px;";
+$def[".igk-ms-dialog .igk-ms-dialog-title"]="font-size:2.1em; padding:8px 16px;";
+igk_css_regcolor("igk-ms-dialog-bg", "#454545");
+igk_css_regcolor("igk-ms-dialog-fcl", "#cecece");
+igk_css_regcolor("igk-mail-bg", "#fafafa");
+igk_css_regcolor("igk-mail-fcl", "#444");
+$def["igk.btn.igk-btn-logout"]="width:16px; height:16px;";
+$def[".igk-configpage-editor"]="position:fixed; top:0px; left:50%; border:1px solid black; z-index:10000; opacity:0; background-color: #ddd;";
+$def[".igk-configpage-editor a"]="margin:5px;";
+$def[".igk-configpage-editor select"]="vertical-align:middle; border:none;";
+$def[".igk-configpage-editor .close-bar"]="background-color: #888";
+$def[".igk-configpage-editor .close-bar:hover"]="background-color: #eee";
+$def[".igk-bodypage"]="{sys:fitw,fith,posr} overflow:hidden;";
+$def[".igk-session-block"]="{sys:posfix} [sysbgcl:sessionBlockBackground] [sysfcl:sessionBlockColor]";
+igk_css_regcolor('sessionBlockBackground', "indigo", 1);
+$def[".igk-session-block .cllabel"]="{sys:dispb,alignt,alignl}";
+$def[".igk-session-button"]="[res:session_btn]; [trans: all 0.2s] cursor:pointer; z-index:{$ctrl_session_zindex}; top:0px; opacity:0.1";
+$def[".igk-session-button:hover"]="opacity:1.0";
+$def[".sm .igk-session-button"]="display:none !important;";
+$def[".xsm .igk-session-button"]="display:none !important;";
+$def[".igk-round-chart .bar1"]="color:#444";
+$def[".igk-round-chart .bar2"]="color:#ccc";
+$def[".igk-round-chart .text"]="color:#888";
+$def[".igk-dev-struct div"]="border : 1px dotted #aaa";
+//+ background layer
+
+$def[".igk-background-layer"]="{sys:posfix, loc_t, loc_l, fitw, fith, no-overflow} [sysbgcl:igk-background-layer-bg]; z-index:-100";
+$def[".igk-background-layer img"]="{sys:posab, fitw} min-width:750px;";
+$lg_screen[".igk-background-layer img"]=
+$xlg_screen[".igk-background-layer img"]=
+$xxlg_screen[".igk-background-layer img"]="{sys:fit, fitc}";
+$def[".igk-wc-splitter .w_1"]="color:#B42431;";
+$def[".igk-wc-splitter .w_2"]="color:#FFB73C;";
+$def[".igk-wc-splitter .w_3"]="color:#2A2FFF;";
+$def[".igk-wc-splitter .w_4"]="color:#4FB080;";
+$def[".igk-fragment"]="white-space: nowrap !important;overflow:hidden;";
+$def[".igk-fragment > .igk-fragment-page"]="{sys:dispib, alignt, fitw} padding-bottom:32px;";
+$def[".igk-panel-box"]="{sys:no-overflow} background-color:#fff; line-height:2.1em; border:1px solid #e5e5e5; padding:16px 10px; text-overflow:ellipsis;";
+$def[".igk-android"]="";
+$def["body.igk-android"]="height:auto; overflow:auto;";
+$def[".igk-android.lnd-scape"]="";
+$ptr_def=$theme->getPrintMedia();
+$def[".igk-btn.dispn"]="display:none !important";
+$def[".igk-section-title"]="{sys:no-wrap, ellipsis, no-overflow}";
+$def[".igk-table-host"]="overflow-x:auto !important; width:100%;";
+$def[".igk-comm-lnk, .igk-comm-style"]="{sys:dispib} width:32px; height:32px; cursor:pointer;";
+$def[".igk-comm-lnk > .igk-svg-symbol"]="{sys:fit} border:none !important; fill:white; ";
+$def[".igk-comm-lnk > .igk-svg-symbol.facebook:hover"]="fill:#07F";
+$def[".igk-svg-symbol"]="{sys:fit} fill:#444;[trans: fill .2s ease-in-out]";
+$def[".igk-svg-symbol:hover"]="fill:indigo;";
+$def[".igk-winui-track"]="height:4px; position:relative";
+$def[".igk-winui-track .track"]="background-color: #2EB2FF; position:absolute; left:0px; top:0px; bottom:0px;";
+$xsm_screen[".igk-copyright"]=
+$sm_screen[".igk-copyright"]="{sys:alignc}";
+$def[".igk-resizer .rule"]="display:inline-block; background-color:#eee;";
+$def[".igk-resizer .rule:hover"]="background-color:#cecece; cursor:pointer;";
+$def[".igk-resizer:after"]="display:table;content:'dd '; clear:both; overflow:hidden";
+$def[".igk-resizing div.igk-debug-info"]="display:none !important";
+$xsm_screen[".igk-form"]=
+$sm_screen[".igk-form"]="width:100%;";
+$def[".igk-winui-dialogbox"]="width:440px;";
+$def[".igk-winui-dialogbox.no-close .cls"]="{sys:dispn}";
+$def[".igk-winui-dialogbox:before"]="{sys:posfix, loc_l, loc_t, loc_r, loc_b} background-color:#444; opacity:0.8; display:block; content:' ';  ";
+$def[".igk-winui-dialogbox .title"]="background-color:[cl: dialogBgColor, #455A64]; color:#DCDCDC; padding:12px 0px; ";
+$def[".igk-winui-dialogbox .title .igk-svg-symbol"]="fill:#DCDCDC";
+$def[".igk-winui-dialogbox .title .igk-section-title"]="{sys:dispib} padding-left:48px; font-size:1.4em";
+$def[".igk-winui-dialogbox .title .cls"]="cursor:pointer;{sys:posab, loc_l} display:block; line-height:1px; top:50%; margin-top:-16px; margin-left:8px; width:32px; z-index:2; padding:8px;";
+$def[".igk-winui-dialogbox .title .opts"]="cursor:pointer;{sys:posab, loc_r} display:block; top:50%; margin-top:-8px; margin-right:8px; width:16px; z-index:2";
+$def[".igk-winui-dialogbox .dialog-c"]="background-color: #C4C6C4;padding:2em 0px";
+$def[".igk-winui-dialogbox .igk-form > .content > input:not(:first-child)"]="margin-top:1.5em";
+$def[".igk-android .igk-winui-dialogbox"]=
+$xsm_screen[".igk-winui-dialogbox"]=
+$sm_screen[".igk-winui-dialogbox"]=$lg_screen[".igk-winui-dialogbox"]
+="width:100%";
+$xxlg_screen[".igk-winui-dialogbox"]="width:880px";
+$def["ul.puce"]="padding-left:32px;";
+$def["ul.puce > li"]="list-style-type:disc;";
+$xsm_screen["ul.puce > li"]="list-style-type:none; padding-right:32px;padding-top:0.5em;";
+$def[".igk-winui-listbox"]="background-color: #444; color:#eee; padding-bottom:4px; margin-left:-10px; margin-right:-10px;";
+$def[".igk-winui-listbox > li"]="display:block !important; border-right:4px #F60 solid;";
+$def[".igk-winui-listbox > li a"]="{sys:dispb} padding:8px; color:#EAEAEA";
+$def[".igk-winui-listbox > li.igk-active"]=" background-color:#F60; color:#EAEAEA";
+$def[".igk-winui-listbox > li.igk-active a"]=" color:#EAEAEA";
+$def[".igk-community-node.inline ul > li"]="{sys:dispib}";
+$def[".igk-centerbox"]="{sys:disptable, fit}";
+$def[".igk-svg-lst"]="{sys:dispn}";
+$def[".igk-winui-toast"]="{sys:posfix} color:[cl:toastForeColor, #eee]; background-color:[cl:toastBackgroundColor, #444]; transform:translate(-50%); left:50%; bottom:2rem; padding:10px; [trans: 1.4s opacity ease-in-out] z-index:300;";
+$def[".igk-winui-toast.igk-success"]="background-color:[syscl:toastSuccessBackground]";
+$def[".igk-body.igk-bgfilter-blur .igk-winui-toast"]="filter:none !important";
+$def[".igk-winui-span-group"]="display:inline-block";
+$def[".igk-winui-span-group > span"]="float:left; padding:0px 10px;";
+$def[".igk-android .igk-framebox-dialog"]="width:100%;";
+$def[".igk-ajx-lnk"]="cursor:pointer;";
+$def[".igk-ajx-loader-bar"]="height:4px; position:absolute; left:0px; top:0px; width:100%; right:0px; z-index:10;";
+$def[".igk-ajx-loader-bar:after"]="display:block; content:' '; background-color:green; height:100%; width:0;";
+$def[".igk-admin-menu.vertical"]="min-width:210px";
+$def[".igk-admin-menu.vertical li"]="{sys:dispb} ";
+$def[".igk-admin-menu.vertical > li a"]="{sys:dispb,no-wrap} color:[syscl:menuLinkColor]; [trans:background-color 0.2s ease-in]font-size:1.2em; padding:10px 0px; padding-left:36px; padding-right:10px";
+$def[".igk-admin-menu.vertical > li a:visited"]="color:[syscl:menuLinkColor];";
+$def[".igk-admin-menu.vertical > li a:hover:not(.igk-active)"]="background-color:#ccc; color:white;";
+$def[".igk-admin-menu.vertical > li a.igk-active"]="background-color:red; color:white;";
+$def[".igk-js-notify-box"]="position:fixed !important; {sys:loc_a} z-index:800; margin:10px;";
+$def[".igk-js-notify-box.igk-show .igk-js-notify"]="box-shadow:0 0 4px;";
+$def[".igk-js-notify-box.igk-show .igk-js-notify .content-z"]="{sys:dispib, alignl}";
+$def[".igk-hline-sep"]="border-top:1px solid [syscl:HLineSeparatorColor] ; margin-top:1.3em";
+$def[".igk-hline-sep:before"]="content:' '; display:block; height:16px";
+$def["input.igk-state-btn[type='checkbox']"]="height:1px;width:0px;overflow:hidden;padding:0px;position:absolute;clip:rect(0,0,0,0);";
+$sm_screen[".igk-container"]="padding:0px; margin:0px;";
+$sm_screen[".igk-container > .igk-row"]="padding:0px; margin:0px;";
+$sm_screen[".igk-sm-dispn"]=$xsm_screen[".igk-xsm-dispn"]
+="{sys:dispn}";
+$def[".igk-bgfilter-blur"]="";
+$def[".igk-body.igk-bgfilter-blur > div:not(.igk-js-notify-box)"]="filter:blur(4px) grayscale(100%);";
+$def[".igk-body.igk-bgfilter-blur > div.igk-js-notify-box"]="filter:none !important;";
+$def[".igk-body.igk-bgfilter-blur > div.mceDropDown"]="filter:none !important;";
+$def[".igk-body.igk-bgfilter-blur > .mce-widget, .igk-body.igk-bgfilter-blur .mce-container"]=
+$def[".igk-body.igk-bgfilter-blur .igk-powered"]="filter:none !important;";
+$def[".igk-body.igk-bgfilter-blur .igk-bodybox"]="overflow:hidden !important";
+$sm_screen[".igk-bodybox"]="overflow-x:hidden !important";
+$def[".igk-truncate.igk-show"]="text-overflow: ellipsis;  white-space: nowrap;  overflow: hidden; height:2em";
+$def[".igk-truncate-btn a:before"]="content:attr(data-off);";
+$def[".igk-truncate.igk-show + .igk-truncate-btn a:before"]="content:attr(data-on);";
+$s=$theme->get_media(IGKHtmlDocThemeMediaType::GT_SM_MEDIA);
+$xsm_screen[".igk-gtsm-only"]=
+$sm_screen[".igk-gtsm-only"]=
+$xsm_screen[".igk-gtxsm-only"]=
+$xsm_screen[".igk-gtlg-only"]=
+$sm_screen[".igk-gtlg-only"]=
+$lg_screen[".igk-gtlg-only"]=
+$xsm_screen[".igk-gtxlg-only"]=
+$sm_screen[".igk-gtxlg-only"]=
+$lg_screen[".igk-gtxlg-only"]=
+$xlg_screen[".igk-gtxlg-only"]="{sys:dispn}";
+$def["td .igk-svg-btn:first-child:last-child"]="width:16px; height:16px; margin:8px;";
+$def[".igk-svg-btn svg"]="{sys:fit}";
+$def[".igk-xml-viewer:after"]="content:' '; {sys:clearb, dispb}";
+$def[".igk-xml-viewer span"]="{sys:floatl}";
+$def[".igk-xml-viewer >div:after"]="content:' '; {sys:clearb, disptable}";
+$def[".igk-xml-viewer div.l"]="display:block; clear:both !important;";
+$def[".igk-xml-viewer div.l:after"]="content:' '; {sys:clearb, disptable}";
+$def[".igk-xml-viewer quote"]="clear:both; margin-left:32px;";
+$def[".igk-xml-viewer >div *"]="{sys:floatl}";
+$def[".igk-xml-viewer .attr .n:before"]="content:' '; padding-left:4px; display:inline-block";
+$def[".igk-xml-viewer br"]="{sys:clearb}";
+$def[".igk-xml-viewer .t"]="{sys:dispib} width:32px;";
+$def[".igk-xml-viewer .s"]="[sysfcl:igk-xml-tag-fcl];";
+$def[".igk-xml-viewer .e"]="[sysfcl:igk-xml-tag-fcl]";
+$def[".igk-xml-viewer .o"]="margin:0px !important;";
+$def[".igk-xml-viewer .c"]="font-style:italic; [sysfcl:igk-xml-comment-fcl]";
+$def[".igk-xml-viewer .attr .v"]="[sysfcl:igk-xml-attr-fcl]";
+$def[".igk-xml-viewer .attr .n"]="color:#42a";
+$def[".igk-xml-viewer .attrv"]="[sysfcl:igk-xml-attrv-fcl]";
+$def[".igk-webgl-game-surface"]="{sys:dispib}; margin:auto;";
+$def[".igk-webgl-game-surface > .scene"]="background-color:#444; width:720px; height:409px;";
+$def[".igk-guide-menu"]="[trans: width 0.2s] width:0; z-index:20; overflow:hidden; touch-action:none; top:0px !important;";
+$def[".igk-guide-menu.igk-show"]="width:150px";
+$def[".igk-ajx-pickfile"]="display:inline-block; cursor:pointer; padding:4px; border-left: 4px solid [syscl:pickfileBorder]; background-color:[syscl:pickfileBackground]; margin-right: 1em;";
+$def[".igk-ajx-pickfile:hover"]="border-color:[syscl:pickfileHoverBorder]; background-color:[cl:pickfileHoverBackground]; color: [syscl:pickfileHoverColor];";
+$def[".igk-ajx-pickfile.igk-btn"]="padding: [prop:buttonPadding];";
+$def[".igk-winui-huebar"]="display:inline-block; position:relative; background:linear-gradient(90deg, red, yellow, lime, cyan, blue, magenta, red); cursor:pointer;";
+$def[".igk-winui-huebar .cur"]="position:absolute; width:4px; top:0px; bottom:0px; background-color:white; opacity:0.4;";
+$def[".igk-winui-huebar + .huev"]="content: '0%'";
+$def[".igk-winui-gallery"]="{sys:no-wrap, no-overflow} height:200px;";
+$def[".igk-winui-gallery img"]="{sys:dispib, alignt,fit} [fit:cover]";
+$def[".igk-winui-bg-picturebox"]="{sys:posab, fit} background-size: cover;";
+$def[".igk-cookie-warn"]="{sys:no-overflow} padding:10px; text-align:center; [trans:height 0.5s ease-in]";
+$def[".igk-cookie-warn .close"]="{sys:dispib, posab} width:32px; right:32px; margin-top:auto; ";
+$def[".igk-cookie-warn .close svg"]="{sys:fit}; fill:white";
+$def["code.code-php > div"]="{sys:no-wrap}";
+$def["code.code-php > div span"]="{sys:no-wrap}";
+$def["code.code-php > div span.s"]="color: [syscl:phpCodeStringColor]";
+$def[".igk-winui-pagination .igk-btn.igk-selected"]="background-color:#444; color:#ddd";
+$def[".igk-winui-pagination .igk-btn"]="background-color:#34B0FF; color:#eee";
+$def[".igk-winui-pagination.igk-pull-right"]="{sys:alignr}";
+$def[".igk-winui-pagination.igk-pull-right .igk-btn"]="";
+$def[".igk-winui-pagination.igk-pull-right:after"]="display:table;content:' '; clear:both;";
+$PTR[".igk-session-button"]="display: none;";
+$PTR["body.igk-body"]="background-color:transparent ;";
+$PTR[".no-print"]="display:none !important;";
+$def[".igk-action-bar a.igk-btn"]="";
+$def[".igk-action-bar .igk-btn > svg"]="width:24px; height:24px; padding:4px; fill:#777";
+$def[".igk-action-bar a.igk-btn:hover > svg"]="fill:#54e;";
+$def[".igk-frame-textarea"]="height:200px; resize:vertical;";
+$def["span.igk-textedit"]="cursor:pointer; text-decoration-line:underline; text-decoration-style:dashed; text-decoration-color: [syscl:underLineColor]";
+$def["code"]="{sys:dispib, fitw} overflow-x:auto;";
+$def["code[lang='php'] span.ln"]="background-color:#444;	min-width:3em;";
+$def["code[lang='php'] span.w.r"]="color: #2577FF;";
+$def["code[lang='php'] span.s"]="color: #FF5D83;";
+$def["code[lang='php'] span.cm "]="color: #005C00; ";
+$def["code[lang='php'] span.v "]=" color:#6B214F;";
+$def["code[lang='php'] span.pc"]=" color:#4a8;	font-weight:900; ";
+$def[".igk-flex-container"]="display: flex;";
+$def[".igk-flex-container.dir-c"]="flex-direction: column;";
+$def[".igk-flex-container.dir-rc"]="flex-direction: column-reverse;";
+$def[".igk-flex-container.dir-r"]="flex-direction: row;";
+$def[".igk-flex-container.dir-rr"]="flex-direction: row-reverse;";
+$def[".igk-flex-container.no-wrap"]="flex-wrap: nowrap;";
+$def[".igk-flex-container.r-wrap"]="flex-wrap: wrap-reverse;";
+$def[".igk-flex-container.wrap"]="flex-wrap: wrap;";
+$def[".igk-flex-container.justify-c"]="justify-content: center;";
+$def[".igk-flex-container.justify-s"]="justify-content: flex-start;";
+$def[".igk-flex-container.justify-e"]="justify-content: flex-end;";
+$def[".igk-flex-container.justify-space-a"]="justify-content: space-around;";
+$def[".igk-flex-container.justify-space-b"]="justify-content: space-between;";
+$def[".igk-flex-container.align-c"]="align-items: center;";
+$def[".igk-flex-container.align-s"]="align-items: flex-start;";
+$def[".igk-flex-container.align-e"]="align-items: flex-end;";
+$def[".igk-flex-container.align-b"]="align-items: baseline;";
+$def[".igk-flex-container.align-stretch"]="align-items: stretch;";
+$def[".igk-winui-more-view"]="cursor: pointer;";
+$def[".igk-winui-more-view.igk-hide ~ *"]="display: none !important;";
+$def[".igk-code"]="font-family: 'consolas', sans-serif; font-size:8pt; background-color:[cl:codeBgColor, #eee]; "."border-radius:4px;"."padding:4px; ";
+$def[".igk-winui-panel-dialog"]="[trans: opacity 0.5s ease-out] {sys:posab, loc_a, dispflex} justify-content:center; align-items:center; z-index:100; opacity: 1.0;";
+$def[".igk-winui-panel-dialog::before"]="{sys:posfix, fit, loc_a} background-color: #000; opacity:0.5; content:' ';";
+$def[".igk-winui-panel-dialog.inner.inner-h .box"]="position: absolute; top:10px; bottom:10px;";
+$def[".igk-winui-panel-dialog.inner.inner-h .box > .igk-content"]="overflow-y:auto; position:relative; top:0px; bottom:0px; margin-bottom:-100px;";
+$def[".igk-winui-panel-dialog > .box"]="{sys:dispib, loc_t} background-color: #fcfcfc; border:1px solid #dedede; "." box-shadow: 0 0 10px black;"." padding:10px; border-radius: 10px; ";
+$def[".igk-winui-panel-dialog > .box > .igk-title .close"]="{sys:posab, loc_r, no-padding} margin-right: 10px; width: 16px; height: 16px";
+$def[".igk-winui-panel-dialog > .box > .igk-title .close svg"]="{sys:fit}";
+$def[".igk-winui-panel-dialog::after"]="content:' '; display:table;";
+$def[".igk-winui-panel-dialog.igk-hide"]="opacity: 0.0";
+$def[".svg-16 svg"]="width:16px; height:16px; display: inline-block; line-height:0;";
+$def[".svg-32 svg"]="width:32px; height:32px; display: inline-block; line-height:0;";
+$def[".svg-24 svg"]="width:24px; height:24px; display: inline-block; line-height:0;";
+$def[".svg-48 svg"]="width:48px; height:48px; display: inline-block; line-height:0;";
+$def["div.clsearch form a"]="{sys:posab, alignm}";
+$def["div.clsearch"]="padding:0px;";
+$def["div.clsearch div.disptabr"]="padding-left:32px;";
+$def["div.clsearch div.disptabr input"]=" margin-right:-32px; padding-left: 32px;";
+igk_set_env("sys://globalcolor", 1);
+igk_css_regcolor("igk-btn-default-bg", "#eee");
+igk_css_regcolor("igk-btn-default-fcl", "#aaa");
+igk_css_regcolor("igk-btn-default-hover-bg", "#4AAFFF");
+igk_css_regcolor("igk-btn-default-hover-fcl", "#eee");
+igk_css_regcolor("igk-btn-success-bg", "#afa");
+igk_css_regcolor("igk-btn-success-fcl", "#444");
+igk_css_regcolor("igk-btn-success-hover-bg", "#4AAFFF");
+igk_css_regcolor("igk-btn-success-hover-fcl", "#eee");
+igk_css_regcolor("igk-session-block-bg", "#eee");
+igk_css_regcolor("igk-table-cell-border", "#bbb");
+igk_css_regcolor("igk-success", "#57C136");
+igk_css_regcolor("igk-success-bg", "#44BF55");
+igk_css_regcolor("igk-success-fcl", "white");
+igk_css_regcolor("igk-danger-bg", "#F48174");
+igk_css_regcolor("igk-danger-fcl", "#eee");
+igk_css_regcolor("igk-table-hover-row-fcl", "#fff");
+igk_css_regcolor("igk-table-hover-row-bg", "#ccc");
+igk_css_regcolor("igk-header-fcl", "white");
+igk_css_regcolor("igk-header-bgcl", "#005483");
+igk_css_regcolor("igk-dashed-border-bcl", "#ccc");
+igk_css_regcolor("igk-notify-default-bg", "#777");
+igk_css_regcolor("igk-notify-default-fcl", "#eee");
+igk_css_regcolor("igk-notify-success-bg", "#30CD90");
+igk_css_regcolor("igk-notify-success-fcl", "white");
+igk_css_regcolor("igk-notify-warning-bg", "#FF86AB");
+igk_css_regcolor("igk-notify-warning-fcl", "white");
+igk_css_regcolor("igk-notify-bg", "white");
+igk_css_regcolor("igk-input-cl", "#333");
+igk_css_regcolor("igk-btn-connect-bg", "#3699FF");
+igk_css_regcolor("igk-btn-connect-fcl", "white");
+igk_css_regcolor("igk-btn-download-bg", "#00BD5C");
+igk_css_regcolor("igk-btn-download-fcl", "white");
+igk_css_regcolor("igk-admin-header-bg", "#eee");
+igk_css_regcolor("igk-xml-tag-fcl", "#abf");
+igk_css_regcolor("igk-xml-attrv-fcl", "#ff5e5e");
+igk_css_regcolor("igk-xml-comment-fcl", "#00AA5C");
+igk_css_regcolor("igk-iconbar-bcl", "#aaa");
+igk_css_regcolor("igk-pagination-active-bg", "#AFE");
+igk_css_regcolor("igk-pagination-bg", "#FFF");
+igk_css_regcolor("igk-panel-fcl", "#bbb");
+igk_css_regcolor("igk-panel-bg", "transparent");
+igk_css_regcolor("igk-divider-cl", "#656565");
+igk_css_regcolor("igk-footer-bg", "#898");
+igk_css_regcolor("igk-footer-fcl", "#FFF");
+igk_css_regcolor("igk-body-fcl", "#555");
+igk_css_regcolor("igk-action-bar-bg", "#ddd;");
+igk_css_regcolor("igk-inactive-fcl", "#eee");
+igk_css_regcolor("igk-text-inactive-fcl", "#eee");
+igk_css_regcolor("igk-menu-bar-bg", "#444", 1);
+igk_css_regcolor("igk-menu-bar-fcl", "#ddd", 1);
+igk_css_regcolor("igk-background-layer-bg", "#cdcdcd");
+igk_css_regcolor("igk-warning-bg", "#FF8797");
+igk_css_regcolor("igk-warning-fcl", "#535353");
+igk_css_regcolor("igk-required-mark-fcl", "#a353c3");
+igk_css_regcolor("igk-table-row-odd-bgcl", "#fdfdfd", 1);
+igk_css_regcolor("igk-table-row-odd-fcl", "#aaa", 1);
+igk_css_regcolor("igk-table-row-odd-hover-bgcl", "#ddf", 1);
+igk_set_env("sys://globalcolor", 0);
+foreach([4, 10, 16, 20] as $pad){
+    $def[".pad-".
+    $pad]="padding: {$pad}px;";
+    $def[".marg-".
+    $pad]="margin: {$pad}px;";
+    $def[".pad-b-".
+    $pad]="padding-bottom: {$pad}px;";
+    $def[".pad-t-".
+    $pad]="padding-top: {$pad}px;";
+    $def[".pad-l-".
+    $pad]="padding-left: {$pad}px;";
+    $def[".pad-r-".
+    $pad]="padding-right: {$pad}px;";
+    $def[".marg-b-".
+    $pad]="margin-bottom: {$pad}px;";
+    $def[".marg-t-".
+    $pad]="margin-top: {$pad}px;";
+    $def[".marg-l-".
+    $pad]="margin-left: {$pad}px;";
+    $def[".marg-r-".
+    $pad]="margin-right: {$pad}px;";
+}
+$def[".igk-font-title-1"]="font-family: 'Roboto', 'Helvetica', 'Arial' , sans-serif; font-size: 3em;font-weight: 200;";
+$def[".clcheckbox"]="margin-right:10px;";
+$def[".badge"]="padding: 4px; border-radius: 4px; background-color: #eee; ";
+$def[".igk-bg-img"]="{sys:posfix, loc_a, fit, fitc}";
+$cl["pickfileHoverBackground"]="indigo";
+$cl["buttonActiveBackground"]="red";
+if(igk_sys_env_production()){
+    $def[".igk-winui-js-logger"]="{sys:dispn}";
+}
+$prop["buttonPadding"]="8px";
+$def[".igk-google-line-waiter"]="{sys:no-overflow, fitw} height:4px; background-color:#e6e6e6";
+$def[".igk-google-line-waiter:after"]="{sys:fith,posab, loc_l} width: 70%; content:' '; background-color:#4BC281; [anim:google-linewaiter-infinite 3s infinite, google-linewaiter-infinite2 3s infinite]";
+$def[".igk-winui-combobox + ul"]="background-color:#444; color: white";
+$def[".igk-winui-combobox + ul > li"]="padding:4px;";

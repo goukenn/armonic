@@ -1,0 +1,39 @@
+SetEnv PHP_VER 5_4
+deny from all
+#allow from all
+
+#exposed files
+<Files "jump.php">
+allow from all
+</Files>
+
+<Files "igk_redirection.php">
+allow from all
+</Files>
+<Files "igk_sitemap.php">
+allow from all
+</Files>
+<Files "igk_favicon.php">
+allow from all
+</Files>
+<Files "igk_init.php">
+allow from all
+</Files>
+<Files "igk_services.php">
+allow from all
+</Files>
+<Files "igk_theme_export.php">
+allow from all
+</Files>
+<Files "igk_checkfile.php">
+allow from all
+</Files>
+<Files "igk_platform_manager.php">
+allow from all
+</Files>
+<Files "igk_run_cron.php">
+allow from all
+</Files>
+<Files "igk_exports.php">
+allow from all
+</Files>

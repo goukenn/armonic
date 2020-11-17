@@ -1,0 +1,15 @@
+
+02/04/2020
+-add igk_load_class function for direct loading
+-update core file : to load direct class 
+-add clAutoIncrementStartIndex field to generate query creation. 
+
+01/04/2020
+update clDefault to allow data function for mysql value : 
+11/03/2020
+update balafon.js with function igk.ajx.postFormData
+bugs fixed - on json deserialisation
+
+08/03/2020
+auto evaluation disable on data binding
+.bugs fix

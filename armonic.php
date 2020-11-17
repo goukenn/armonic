@@ -5,12 +5,10 @@
 // version: 2.0
 // release: 10/01/2019
 // copyright: igkdev @ 2020
-
 // explode class interface to single file per class or interface
 
 if (!defined('IGK_FRAMEWORK')){
-	$libfile = "";
-	// print_r($_SERVER);
+	$libfile = ""; 
 	if (isset($_SERVER["IGK_LIB_DIR"])){
 		$libfile = realpath($_SERVER["IGK_LIB_DIR"]."/igk_framework.php"); 
 	} 
@@ -19,7 +17,7 @@ if (!defined('IGK_FRAMEWORK')){
 		//||
 		//file_exists($libfile = "d://wamp/www/igkdev/Lib/igk/igk_framework.php")
 	)){
-		// die("framework doesn't exists.");
+		die("igk_framework.php is Require doesn't exists.");
 		exit(-1);
 		// echo ($libfile);
 		// exit;
@@ -30,6 +28,12 @@ if (!defined('IGK_FRAMEWORK')){
 
 define("ARMONIC_INDENT_CHAR", "    ");
 define("ARMONIC_TEST", 1); 
+
+igk_environment()->cmdColors = [
+	"No"=>"\e[0m",
+	"Green"=>"\e[0;32m",
+	"Red"=>"\e[0;31m"
+];
 
 if (isset($_SERVER["ARMONIC_DATA_FILE"])){
 	define("ARMONIC_DATA_FILE", $_SERVER["ARMONIC_DATA_FILE"]);
@@ -284,10 +288,9 @@ function igk_treat_converttodockblocking($doc, $options){
 		$bs .= "* ".implode($options->LF."*", explode("\n", $n->getContent())).$options->LF;
 	}
 	foreach($d->getElementsByTagName("param") as $n){
-		$bs .= "* @param ";
-		$t = $n['type'];
-		if ($t)
-			$bs.=$t." ";
+		$bs .= "* @param 88 ";
+		$t = igk_getv($n, 'type', "mixed");		
+		$bs.=$t." ";
 		$bs .= $n["name"]." ";
 		$bs .= implode($options->LF."*", explode("\n", $n->getContent())).$options->LF;
 	}
@@ -1126,6 +1129,7 @@ function igk_treat_source($source,  $callback=null, $tab=null,& $options=null){
 								$f = $outdir."/".$ns.$def->name.".php";
 								// igk_wln("outto: ".$f, $src, $nsdef);
 								// if (IGKIO::CreateDir(dirname($f))){
+								
 								igk_io_w2file($f , "<?php\n".igk_treat_getfileheader($option, $f).$nsdef);
 								// }
 								
@@ -1160,8 +1164,7 @@ function igk_treat_source($source,  $callback=null, $tab=null,& $options=null){
 								$_tout .=  $_t;
 							}
 							$_tout = preg_replace("#^".$indent."#im", "", $_tout);
-							$f = $outdir."/".$kk."/_global.ns.php";
-							
+							$f = $outdir."/".$kk."/_global.ns.php"; 
 							igk_io_w2file($f, "<?php\n".igk_treat_getfileheader($option, $f).$_tout);
 						}
 	
@@ -1192,7 +1195,15 @@ function igk_treat_source($source,  $callback=null, $tab=null,& $options=null){
 					$s .= $lf.$def.$out;
 				}else{ 
 					if (!$option->noFileDesc && $option->command){
-						$g = "<?php\n".igk_treat_getfileheader($option,basename($option->command->inputFile)). "?>\n";
+						// igk_wln_e($option->startCGIOffSet);
+						$g = "";
+						if ($option->startCGIOffSet>0){
+							$g .= substr($out, 0, $option->startCGIOffSet)."\n";
+							$out = substr($out, $option->startCGIOffSet);
+						}else{
+							$g .= "<?php\n";
+						}
+						$g .= igk_treat_getfileheader($option,basename($option->command->inputFile)). " \n";
 						$out = $g.$out;
 					}  
 					$s .= $out.$lf.$def;
@@ -3774,6 +3785,7 @@ array_unshift($tab, (object)array(
 					if (preg_match($end_rgx, $t, $tab, PREG_OFFSET_CAPTURE, $offset)){						 
 						$c=1;
 						$s .= substr($t, 0, $tab[0][1]);
+						// igk_wln("MATCHING :".substr($t, 0, $tab[0][1]), strlen(substr($t, 0, $tab[0][1])));
 						$t = substr($t, $tab[0][1] +strlen($tab[0][0]));
 						
 					}
@@ -3781,7 +3793,7 @@ array_unshift($tab, (object)array(
 						break;
 					
 					$s.= $t;
-					$t = rtrim($m->options->source[$ln]);					
+					$t = $m->options->source[$ln];					
 					$s.= $m->options->LF;
 					$ln++;
 					$offset=0;
@@ -3794,8 +3806,8 @@ array_unshift($tab, (object)array(
 						$v_n.= " "; // add space to end bracket style
 					}
 					
-					
-					$o = rtrim($s).$lf."{$v_n}";
+										
+					$o = $s.$lf."{$v_n}";
 					$offset = 0;
 				}else{ 
 					$o = trim($s);
@@ -3893,10 +3905,7 @@ array_unshift($tab, (object)array(
 						
 						if (!igk_getv($options, "noAutoParameter") && isset($v1->readP)){
 							foreach($v1->readP as $kv=>$vv){
-								$s .= "* @param ";
-								if (isset($vv->type)){
-									$s.= $vv->type." ";
-								}
+								$s .= "* @param 77 ".igk_getv($vv, "type" , "mixed")." ";
 								if (isset($vv->ref) && $vv->ref){
 									$s.="* ";
 								}		
@@ -4203,7 +4212,7 @@ function igk_treat_modifier($m){
 		}
 		$c1 = $ModiL[$a];		
 		$c2 = $ModiL[$b];
-		$r = ( $c1<$c2 ? -1 : ($c1==$c2)  ? 0 : 1);
+		$r = ( $c1<$c2 ) ? -1 : (($c1==$c2)  ? 0 : 1);
 		//igk_wln("compare: ", $c1, $c2, " = ".$r);
 		return $r;
 	});
@@ -4523,7 +4532,7 @@ function igk_treat_execute_command($c){
 function igk_treat_filecommand($command){
 	$file = $command->inputFile;
 	if (!isset($command->noAutoCheck) || ($command->noAutoCheck==0) ){
-		$g = exec("php -l ".realpath($file)." 2> NUL", $c, $o); // redirect error no null
+		$g = exec("php -l \"".realpath($file)."\" 2> NUL", $c, $o); // redirect error no null
 		if ($o!=0){
 			igk_ewln("\e[0;31mlint error: ");
 			igk_ewln($c);
@@ -4751,146 +4760,7 @@ $base = function ($out, $option){
 		
 		if (igk_getv($option->command, "noTreat")!=1){
 			$def = "";
-			// if (igk_getv($option->command, "singleFilePerClass")==1){
-			 
-			// 	($outdir = igk_getv($option->command,"singleFileOutput")) || 
-			// 	($outdir = igk_getv($option->command,"outDir")) ||
-			//     ($outdir = dirname($option->command->outFile));
-
-				
-			// 	// igk_wln_e("info ....= ", $outdir, $option->command->outDir);
-			// 	if (!empty($outdir)){
-
-			// 	$tdef = (object)array();
-			// 	$globaloutput = array();
-			// 	foreach($option->definitions as $k=>$v){
-			// 		if ($k=="lastTreat")
-			// 			continue;
-			// 		$NS_N = "";
-			// 		//
-			// 		$defp = array((object)array("ns"=>"", "d"=>$v) );
-			// 		$gsrc = "";
-			// 		while($q = array_pop($defp)){
-				 
-			// 			foreach($q->d as $def){
-			// 				switch(strtolower($def->type))
-			// 				{
-			// 					case "function":
-			// 						if (empty($q->ns)){ 
-			// 							$tdef->function[]= $def;
-			// 						}else{
-			// 							$globaloutput[$q->ns]["func"][] = $def;										
-			// 						}
-			// 						continue 2;
-			// 					break;
-			// 					case "namespace": 
-			// 					{  
-			// 						//single line namespace declaration or {}
-									 
-			// 						if (isset($def->globalSrc) && !empty($gnssrc = $def->globalSrc)){
-			// 							$nsdec = "";
-			// 							if (isset($def->def)){
-			// 								$nsdec.= $def->def.";".IGK_LF;//.$src."}";
-		
-			// 							}else 	
-			// 								$nsdec .= $def->src;//.$src;
-
-			// 							$globaloutput[$def->name]["nsdec"] = $nsdec;
-			// 							$globaloutput[$def->name]["gsrc"][] = $gnssrc;
-			// 							unset($nsdec, $ngssrc);
-			// 						}
-			// 						foreach($def->definitions as $nt=>$mf){
-			// 							if($nt=="use"){
-			// 								foreach($mf as $rr){
-			// 									$gsrc.= $rr->src. IGK_LF;
-			// 								}
-			// 								continue;
-			// 							}								
-			// 							array_push($defp, (object)array("ns"=>$def->name, "d"=> $mf ,"p"=>$def, "src"=> & $gsrc));
-			// 						}
-	
-			// 						continue 2;
-			// 					}
-			// 					break;
-			// 					case "use": 
-			// 						if (empty($q->ns)){ 
-			// 							$tdef->use[]= $def;
-			// 						} 
-			// 						continue 2;								 
-			// 					break;
-			// 					default:
-			// 					break;
-			// 				}
-						
-
-			// 				$src = $gsrc.$def->src;
-			// 				$nsdef = "";
-			// 				if(!empty($ns = $q->ns)){
-			// 					$ns.="/";
-			// 					// igk_wln_e("qrc : ", $q);//, " : ", $gsrc);
-			// 					if (isset($q->p->def)){
-			// 						$nsdef.= $q->p->def."{".IGK_LF.$src."}";
-
-			// 					}else 	
-			// 						$nsdef .= $q->p->src.$src;
-			// 				}else{
-			// 					$nsdef = $src;
-			// 				}
-
-							
-			// 				$f = $outdir."/".$ns.$def->name.".".strtolower($def->type).".php";
-			// 				// igk_wln("outto: ".$f, $src, $nsdef);
-			// 				// if (IGKIO::CreateDir(dirname($f))){
-			// 				igk_io_w2file($f , "<?php\n".igk_treat_getfileheader($option, $f).$nsdef);
-			// 				// }
-							
-						 
-
-			// 			}
-			// 		}
- 
-			// 	}
-				
-				
-				
-		
-			// 	if (count($globaloutput)>0){
-			// 		$indent = str_repeat($option->IndentChar, 1);
-			// 		foreach($globaloutput as $kk=>$tt){
-			// 			$_tout = "";
-
-			// 			$_tout .= $tt["nsdec"].IGK_LF;
-
-			// 			if (isset($tt["func"]) && ($funcs = $tt["func"])){
-			// 				//sort func
-			// 				usort($funcs, function($a, $b){
-			// 					return strcmp( $a->name, $b->name);
-			// 				}); 
-			// 				foreach($funcs as $_gfc){
-			// 					$_tout .= $_gfc->src;
-			// 				}
-			// 			}
-
-			// 			foreach($tt["gsrc"] as $_t){
-			// 				$_tout .=  $_t;
-			// 			}
-			// 			$_tout = preg_replace("#^".$indent."#im", "", $_tout);
-			// 			$f = $outdir."/".$kk."/_global.ns.php";
-						
-			// 			igk_io_w2file($f, "<?php\n".igk_treat_getfileheader($option, $f).$_tout);
-			// 		}
-
 			
-			// 	}
-			// 	else{
-			// 		//igk_wln_e("tdef ::: ", $tdef);
-			// 		$def = igk_treat_outdef($tdef, $option);
-			// 	}
-			// }
-			// 	// igk_wln($globaloutput);
-			// 	// igk_wln_e("single file per class ... 1", $out);
-			// }
-			// else{
 				if (!empty((array)$option->definitions)){
 					$def = igk_treat_outdef($option->definitions, $option);
 				}else {
@@ -4898,7 +4768,7 @@ $base = function ($out, $option){
 						$def = igk_treat_getfileheader($option, basename($option->command->inputFile)); 
 					}
 				}
-			//}
+
 
 			$regx = "/^\<\\?(php)?(\\s*|$)/";
 			$s = "";
@@ -5088,7 +4958,7 @@ igk_treat_reg_command("-d, --inputDir", function($v, $command, $c){
 		$v = igk_io_expand_path($v);		
 		$command->inDir = $v;
 		if (!is_dir($v)){
-			igk_wln_e("error", "Input directory ".$v." does not exists");		
+			igk_wln_e("error", "Input directory: [".$v."] does not exists");	
 		}
 		
 		$command->{"exec"} = function($command){ 
@@ -5130,9 +5000,16 @@ igk_treat_reg_command("-d, --inputDir", function($v, $command, $c){
 			// }
 			
 			$outfile = igk_io_dir($sdir.substr($file,$ln));
-			igk_ewln("\e[0;31mfile:\e[0m->".$file);
+			igk_ewln(
+				igk_environment()->cmdColors["Green"]."File: ".
+				igk_environment()->cmdColors["No"]. "-> ".
+				$file);
 			if ($v_treatfc($file)){ //preg_match("/\.(pinc|ph(p|tml))$/", $file)){
 				
+				if(strpos($file," ")!==false){
+					// $file = str_replace(" ", "\ ", $file);
+				}
+				igk_wln("new file :".$file);
 				$command->inputFile = $file;
 				$command->outFile = $outfile;				
 				igk_treat_filecommand($command);			
@@ -5232,18 +5109,11 @@ igk_treat_reg_command("--list", function($v, $command, $c){
 				// }
 				igk_treat_update_def($m, 'class', $r);
 			},
-			"interface"=>function($tab, &$tref, $m){
-				//igk_wln("\e[0;32mclass : \e[0m" );
-				igk_treat_render_data($tab,"Interfaces:", $r);	
-				// render_data($k);
-				
+			"interface"=>function($tab, &$tref, $m){ 
+				igk_treat_render_data($tab,"Interfaces:", $r); 
 			},
 			"trait"=>function($tab, &$tref, $m){
 				igk_treat_render_data($tab,"Traits:", $r);	
-				// igk_wln("\e[0;32mtrait: \e[0m" );
-				// foreach($tab as $k){
-					// igk_wln($k->type." ".$k->name." ");
-				// }
 			}, "global"=>function($tab, & $tref, $m){
 				//+ treat global definition
 				$r = 0;

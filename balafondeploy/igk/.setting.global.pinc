@@ -1,0 +1,61 @@
+<?php
+// @file: .setting.global.pinc
+// @author: C.A.D. BONDJE DOUE
+// @license: Microsoft MIT License. For more information read license.txt
+// @company: IGKDEV
+// @mail: bondje.doue@igkdev.com
+// @url: https://www.igkdev.com
+
+igk_reg_global_setting('BootStrap.Enabled', '1');
+igk_reg_global_setting('BootStrap.JsEnabled', '1');
+igk_reg_global_setting('JQuery.Enabled', '1');
+igk_reg_global_setting('admin_login', 'admin');
+igk_reg_global_setting('allow_article_config', '1');
+igk_reg_global_setting('allow_log', '0');
+igk_reg_global_setting('allow_debugging', '0');
+igk_reg_global_setting('app_default_controller_tag_name', 'div');
+igk_reg_global_setting('cache_file_time', '3600');
+igk_reg_global_setting('company_name', 'igkdev');
+igk_reg_global_setting('copyright', 'IGKDEV &copy; 2011-'.date('Y').' all rights reserved');
+igk_reg_global_setting('default_dataadapter', 'MYSQL');
+igk_reg_global_setting('db_name', 'igkdev');
+igk_reg_global_setting('db_prefix', 'tbigk');
+igk_reg_global_setting('db_server', 'localhost');
+igk_reg_global_setting('db_user', 'root');
+igk_reg_global_setting('db_driver', 'nodb');
+igk_reg_global_setting('default_lang', 'fr');
+igk_reg_global_setting('mail_admin', 'administrator@igkdev.com');
+igk_reg_global_setting('mail_contact', 'info@igkdev.com');
+igk_reg_global_setting('mail_port', '25');
+igk_reg_global_setting('mail_server', 'relay.skynet.be');
+igk_reg_global_setting('mail_portal', 'https://mail.ovh.net/roundcube/?_user=');
+igk_reg_global_setting('menuHostCtrl', ' ');
+igk_reg_global_setting('globaltheme', 'default');
+igk_reg_global_setting('menu_defaultPage', 'default');
+igk_reg_global_setting('meta_copyright', 'igkdev@igkdev.com');
+igk_reg_global_setting('meta_description', 'default page description');
+igk_reg_global_setting('meta_enctype', 'text/html; charset=utf-8');
+igk_reg_global_setting('meta_keysword', 'igkdev, .NET Developper, PHP, HTML5,WEB DEV');
+igk_reg_global_setting('meta_title', 'igkdev.be');
+igk_reg_global_setting('powered_message', '');
+igk_reg_global_setting('show_debug', '0');
+igk_reg_global_setting('show_powered', '1');
+igk_reg_global_setting('default_controller', 'igk_default');
+igk_reg_global_setting('website_adminmail', 'bondje.doue@igkdev.com');
+igk_reg_global_setting('website_domain', 'igkdev.com');
+igk_reg_global_setting('mail_noreply', 'no-reply@igkdev.com');
+igk_reg_global_setting('website_prefix', 'igk');
+igk_reg_global_setting('website_title', 'igkdev');
+igk_reg_global_setting('php_run_script', '');
+igk_reg_global_setting('python_run_script', '');
+igk_reg_global_setting('db_pwd', '');
+igk_reg_global_setting('ob_buffer_padding_length', 0);
+igk_reg_global_setting('max_script_execution_time', 0);
+igk_reg_global_setting('date_time_zone', 'Europe/Brussels');
+igk_reg_global_setting('default_author', null);
+igk_reg_global_setting('help_uri', null);
+igk_reg_global_setting('configuration_port', 8080);
+igk_reg_global_setting('force_secure_redirection', 0);
+igk_reg_global_setting('secure_port', 443);
+igk_reg_global_setting("force_single_controller_app", 0);
+igk_reg_global_setting("site_dir", "/sites");

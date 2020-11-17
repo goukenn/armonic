@@ -1,0 +1,12 @@
+<?php
+// @file: igk_extensions.phtml
+// @author: C.A.D. BONDJE DOUE
+// @license: Microsoft MIT License. For more information read license.txt
+// @company: IGKDEV
+// @mail: bondje.doue@igkdev.com
+// @url: https://www.igkdev.com
+
+$dir=dirname(__FILE__);
+igk_reglib_once($dir."/igk_mysql_db.php");
+igk_reglib(igk_loadlib($dir."/Ext", "php"));
+unset($dir);

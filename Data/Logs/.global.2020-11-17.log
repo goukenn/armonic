@@ -1,0 +1,126 @@
+17-11-2020 16:27:54:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$ignoreDirs D:\CAD\DEV\Tools\armonic\armonic.php:5108
+17-11-2020 16:27:54:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$ignoreDirs
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :5108
+request_uri :
+query_string :
+
+17-11-2020 16:27:54:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$mode D:\CAD\DEV\Tools\armonic\armonic.php:2263
+17-11-2020 16:27:54:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$mode
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :2263
+request_uri :
+query_string :
+
+17-11-2020 16:36:45:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$ignoreDirs D:\CAD\DEV\Tools\armonic\armonic.php:4970
+17-11-2020 16:36:45:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$ignoreDirs
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :4970
+request_uri :
+query_string :
+
+17-11-2020 16:36:45:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$mode D:\CAD\DEV\Tools\armonic\armonic.php:2264
+17-11-2020 16:36:45:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$mode
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :2264
+request_uri :
+query_string :
+
+17-11-2020 16:37:12:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$ignoreDirs D:\CAD\DEV\Tools\armonic\armonic.php:4970
+17-11-2020 16:37:12:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$ignoreDirs
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :4970
+request_uri :
+query_string :
+
+17-11-2020 16:37:13:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$mode D:\CAD\DEV\Tools\armonic\armonic.php:2264
+17-11-2020 16:37:13:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$mode
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :2264
+request_uri :
+query_string :
+
+17-11-2020 16:37:54:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$ignoreDirs D:\CAD\DEV\Tools\armonic\armonic.php:4969
+17-11-2020 16:37:54:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$ignoreDirs
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :4969
+request_uri :
+query_string :
+
+17-11-2020 16:39:04:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$ignoreDirs D:\CAD\DEV\Tools\armonic\armonic.php:4970
+17-11-2020 16:39:04:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$ignoreDirs
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :4970
+request_uri :
+query_string :
+
+17-11-2020 16:40:40:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$ignoreDirs D:\CAD\DEV\Tools\armonic\armonic.php:4975
+17-11-2020 16:40:40:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$ignoreDirs
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :4975
+request_uri :
+query_string :
+
+17-11-2020 16:40:51:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$ignoreDirs D:\CAD\DEV\Tools\armonic\armonic.php:4975
+17-11-2020 16:40:51:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$ignoreDirs
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :4975
+request_uri :
+query_string :
+
+17-11-2020 16:42:30:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$ignoreDirs D:\CAD\DEV\Tools\armonic\armonic.php:4977
+17-11-2020 16:42:30:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$ignoreDirs
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :4977
+request_uri :
+query_string :
+
+17-11-2020 16:42:30:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$mode D:\CAD\DEV\Tools\armonic\armonic.php:2271
+17-11-2020 16:42:30:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$mode
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :2271
+request_uri :
+query_string :
+
+17-11-2020 16:43:49:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$ignoreDirs D:\CAD\DEV\Tools\armonic\armonic.php:4977
+17-11-2020 16:43:49:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$ignoreDirs
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :4977
+request_uri :
+query_string :
+
+17-11-2020 16:43:49:[igk_sys_g_handle_error] - :
+severity: 8 Undefined property: stdClass::$mode D:\CAD\DEV\Tools\armonic\armonic.php:2271
+17-11-2020 16:43:49:[igk_sys_g_handle_error] - /!\severity :8
+message :Undefined property: stdClass::$mode
+filename :D:\CAD\DEV\Tools\armonic\armonic.php
+line :2271
+request_uri :
+query_string :
+

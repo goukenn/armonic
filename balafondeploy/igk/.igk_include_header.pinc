@@ -1,0 +1,16 @@
+<?php
+// author: C.A.D. BONDJE DOUE
+
+// define("IGK_FORCSS", 1);
+require_once(dirname(__FILE__)."/igk_framework.php");
+$igk_index_file=dirname(__FILE__)."/../../index.php";
+chdir(dirname(__FILE__)."/../../");
+if(!file_exists($igk_index_file)){
+    igk_wl("<div>/!\\ Index file not exist. please reinstall the igk <a href='./Lib/igk/igk_init.php'>balafon</a> core lib.</div>");
+    return;
+}
+chdir(dirname($igk_index_file));
+header("Status: 200 OK");
+header($_SERVER['SERVER_PROTOCOL']. " 200 OK");
+include_once($igk_index_file);
+unset($igk_index_file);

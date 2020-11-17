@@ -1,0 +1,1 @@
+Fix:  igkconfigdata add __isset magic function
