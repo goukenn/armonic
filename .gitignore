@@ -4,7 +4,7 @@
 /balafondeploy
 /test
 /output
-.gitignore
+**/.gitignore
 bck/armonic.bat
 deploy_balafon.bat
 test_armonic.bat
