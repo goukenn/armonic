@@ -1,10 +1,7 @@
-/bck
 **/.vscode
-/Data
-/balafondeploy
+**/balafondeploy
 /test
-/output
-**/.gitignore
-bck/armonic.bat
-deploy_balafon.bat
-/test_armonic.bat
+/bck
+/Data/*
+/output/*
+.gitignore
