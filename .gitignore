@@ -1,3 +1,9 @@
 __armonic.php
 **/.vscode
 igk_framework.php
+/tst/*
+**/.gitignore
+/Doc/
+Data/Logs/*
+out.php
+.gitignore

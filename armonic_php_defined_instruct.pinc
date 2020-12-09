@@ -21,32 +21,36 @@ array_unshift($tab, (object)array(
             $totreat=igk_createobj();
             $totreat->def=preg_replace("/\\s+/", "", $m->data[0][0]);
             $totreat->type=$m->data["operator"][0];
-            $totreat->starTreat=function(){igk_wln_e("start treat **************************");
+            $totreat->starTreat=function(){
+                igk_wln_e("start treat **************************");
             };
-            $totreat->endTreat=function($s, $options, $toread){$toread->def .= trim($s);
+            $totreat->endTreat=function($s, $options, $toread){
+                $toread->def .= trim($s);
                 $fi=1;
-                if(!isset($options->FileInstructFlag)){
-                    foreach($options->definitions as $k=>$v){
-                        if($k == "FileInstruct")
-                            continue;
-                        if(count($v) > 0){
-                            $fi=0;
-                            break;
-                        }
-                    }
-                }
-                else{
-                    $fi=0;
-                }
+                // if(!isset($options->FileInstructFlag)){
+                //     foreach($options->definitions as $k=>$v){
+                //         if($k == "FileInstruct")
+                //             continue;
+                //         if(count($v) > 0){
+                //             $fi=0;
+                //             break;
+                //         }
+                //     }
+                // }
+                // else{
+                //     $fi=0;
+                // }
                 igk_treat_restore_context($options);
-                if($fi){
-                    $options->definitions->FileInstruct[]=$toread->def;
-                }
-                else{
+
+                // igk_wln_e("bind file instruction", $fi, $options->output );
+                // if(($options->context != "global") && $fi){
+                //     $options->definitions->FileInstruct[]=$toread->def;
+                // }
+                // else{
                     $options->FileInstructFlag=1;
                     $options->DataLFFlag=1;
                     igk_treat_append($options, $toread->def, 0);
-                }
+                // }
             };
             $totreat->handleChar=function(& $t, $start, & $offset, $ch, $m){
                 switch($ch){
@@ -74,9 +78,11 @@ array_unshift($tab, (object)array(
             if($totreat->def[strlen($totreat->def)-1] == '('){
                 $m->options->conditionDepth=1;
             }
-            else{}
             $m->options->DataLF=0;
             $m->options->toread=$totreat;
-            return $t;
+            // echo __FILE__.":".__LINE__. " ". $t;
+            // igk_wln($totreat);
+            // exit;
+            return  $t;
         }
     ));
