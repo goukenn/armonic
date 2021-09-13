@@ -11,6 +11,8 @@ if (!defined('IGK_FRAMEWORK')){
 	$libfile = ""; 
 	if (isset($_SERVER["IGK_LIB_DIR"])){
 		$libfile = realpath($_SERVER["IGK_LIB_DIR"]."/igk_framework.php"); 
+	} else if (isset($_SERVER["IGK_LIB_FILE"])){
+		$libfile = realpath($_SERVER["IGK_LIB_FILE"]);
 	} 
 	if (!(!empty($libfile) && file_exists($libfile)) && !( 
 		file_exists($libfile = dirname(__FILE__)."/../igk/igk_framework.php") 
@@ -3921,11 +3923,14 @@ array_unshift($tab, (object)array(
 						
 						if (($cond1=isset($v1->ReturnType)) | ($cond2 = (isset($v1->options) && igk_getv($v1->options, "ref")))){
 							$s .= "* @return ";
+							$d = [];
+
 							if ($cond1)
-								$s.= $v1->ReturnType;
-							if ($cond2){
-								$s .= "*";
+								$d[] = $v1->ReturnType;
+							if ($cond2 && !in_array("mixed", $d)){
+								$d[] = "mixed";
 							}
+							$s.= implode("|", $d);
 							$s.=$options->LF;
 						}
 						
